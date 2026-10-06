@@ -74,6 +74,8 @@ function mount(r, c) {
     turnBox: h('div', 'cl-turn', main),
     bottom: h('div', 'cl-bottom', main),
     bigDate: h('div', 'cl-bigdate', main),
+    idle: h('div', 'cl-idle', main),
+    badges: h('div', 'cl-badges', stage),
     countdown: h('div', 'cl-countdown', main),
     stop: h('div', 'cl-stop', main, 'STOP'),
     mark: h('div', 'cl-mark', main),
@@ -120,6 +122,20 @@ function mount(r, c) {
   els.fChoose = h('div', 'cl-fchoose', f, 'Choose starting side');
   els.fTime = makeDigits(f, 'cl-ftime');
 
+  // between-ends clock screen (ArcheryClock 2.6 style): big time, date lines, banner, and two big
+  // round badges (end number, next detail) in place of the traffic light
+  els.iTime = h('div', 'cl-i-time', els.idle);
+  els.iDay = h('div', 'cl-i-day', els.idle);
+  els.iDate = h('div', 'cl-i-date', els.idle);
+  els.iYear = h('div', 'cl-i-date', els.idle);
+  els.iBanner = h('div', 'cl-i-banner', els.idle);
+  els.bEnd = h('div', 'cl-badge', els.badges);
+  els.bEndLabel = h('span', 'cl-b-word', els.bEnd);
+  els.bEndNum = h('span', 'cl-b-val cl-b-end', els.bEnd);
+  els.bNext = h('div', 'cl-badge', els.badges);
+  h('span', 'cl-b-word cl-b-next-word', els.bNext, 'Next:');
+  els.bNextVal = h('span', 'cl-b-val cl-b-next', els.bNext);
+
   ro = new ResizeObserver(() => { last.layoutKey = null; if (last.snap) render(last.snap); });
   ro.observe(root);
 }
@@ -137,6 +153,7 @@ function layout(mode, lightShown, side) {
   let wf = 1;
   if (mode === 'manual') wf = 0.34;
   else if (mode === 'finals') wf = lightShown ? 1.52 : 1;
+  else if (mode === 'idle') wf = 1.33;
   else wf = lightShown ? 1.25 : 1;
   const R = Math.min(H / 0.75, W / wf) * 0.97;
   const key = `${mode}|${lightShown}|${side}|${W}x${H}`;
@@ -159,6 +176,11 @@ function layout(mode, lightShown, side) {
     m.left = lightShown ? u(26) : '0px';
     els.lightL.col.style.left = u(1); els.lightR.col.style.left = u(128);
     for (const l of [els.lightL, els.lightR]) { l.col.style.top = u(1); l.col.style.setProperty('--lamp', u(22)); }
+  } else if (mode === 'idle') {
+    show(els.main, true);
+    m.left = side === 'left' ? u(33) : '0px';
+    const b = els.badges.style;
+    b.left = side === 'left' ? u(0.5) : u(102);
   } else {
     show(els.main, true);
     m.left = lightShown && side === 'left' ? u(25) : '0px';
@@ -178,7 +200,16 @@ function render(s) {
   const mode = manual && !emergency ? 'manual' : bothFinals ? 'finals' : 'std';
   const lightShown = manual || !!d.trafficLight;
   const side = d.trafficSide === 'left' ? 'left' : 'right';
-  layout(mode, lightShown, side);
+  const idle = s.phase === 'wait' && !emergency && mode === 'std' && !finals && (s.system === 'fita' || s.system === '25m1p')
+    && (d.clock === 'time' || d.clock === 'datetime');
+  layout(idle ? 'idle' : mode, lightShown, side);
+  toggle(root, 'cl-idleclock', idle);
+  show(els.badges, idle);
+  if (idle) {
+    show(els.light.col, false); show(els.lightL.col, false); show(els.lightR.col, false);
+    renderIdle(s, d);
+    return;
+  }
   root.dataset.mode = mode;
   root.dataset.phase = s.phase;
   toggle(root, 'cl-hide-labels', d.hideIcons);
@@ -380,6 +411,48 @@ function clockFace(d, clock, width, maxFs, centreY) {
   }
   last.clockFace = true;
   setDigits(d, c.time, '#d8d8d8', c.ampm, c.sec);
+}
+
+/** Between-ends clock screen. Sizes are in units (--u); Tahoma bold is ~0.6 em per character. */
+function renderIdle(s, d) {
+  const now = new Date();
+  const H = now.getHours(), M = String(now.getMinutes()).padStart(2, '0'), S = String(now.getSeconds()).padStart(2, '0');
+  const secs = d.clockSeconds !== false;
+  let time = d.clock24h ? `${String(H).padStart(2, '0')}:${M}` : `${H % 12 || 12}:${M}`;
+  if (secs) time += ':' + S;
+  const ampm = d.clock24h ? '' : (H < 12 ? ' AM' : ' PM');
+  const withDate = d.clock === 'datetime';
+  const banner = (d.bannerText || '').trim();
+  const fit = (len, maxFs, width = 98) => Math.min(maxFs, width / (len * 0.6));
+  // Tahoma bold digits are ~0.64 em wide, colons ~0.36 em; AM/PM is set at .45 em
+  const timeEms = time.replace(/:/g, '').length * 0.64 + (time.match(/:/g) || []).length * 0.36 + (ampm ? 0.45 * 0.68 * 3 : 0);
+  const timeFs = Math.min(withDate ? 25 : 40, 93 / timeEms);
+  const bannerFs = banner ? fit(banner.length, 8.5) : 0;
+  // three date lines share what is left of the 75-unit height
+  const lineFs = withDate ? Math.min(15.5, (73 - timeFs * 1.02 - bannerFs * 1.15) / 3 / 1.06) : 0;
+  const line = (el, txt, fs) => { setText(el, txt); el.style.fontSize = `calc(var(--u) * ${Math.min(fs, fit(txt.length, fs)).toFixed(2)})`; show(el, !!txt); };
+  setText(els.iTime, '');
+  els.iTime.textContent = time;
+  if (ampm) h('span', 'cl-i-ampm', els.iTime, ampm);
+  els.iTime.style.fontSize = `calc(var(--u) * ${timeFs.toFixed(2)})`;
+  line(els.iDay, withDate ? DAYS_LONG[now.getDay()] : '', lineFs);
+  line(els.iDate, withDate ? `${now.getDate()} ${MONTHS_LONG[now.getMonth()]}` : '', lineFs);
+  line(els.iYear, withDate ? String(now.getFullYear()) : '', lineFs);
+  line(els.iBanner, banner, bannerFs);
+
+  // badges: end number (with P for practice) and the detail that shoots next
+  const e = s.end || {};
+  const endTxt = (e.practice ? 'P' : '') + (e.number ?? '');
+  setText(els.bEndLabel, e.label || 'End');
+  setText(els.bEndNum, endTxt);
+  els.bEndNum.style.fontSize = `calc(var(--u) * ${Math.min(19, 30 / (Math.max(2, endTxt.length) * 0.62)).toFixed(2)})`;
+  const next = s.details && s.details.next;
+  show(els.bNext, !!next);
+  if (next) {
+    setText(els.bNextVal, next);
+    els.bNextVal.style.fontSize = `calc(var(--u) * ${Math.min(19, 30 / (Math.max(2, next.length) * 0.62)).toFixed(2)})`;
+  }
+  toggle(els.badges, 'single', !next);
 }
 
 // both-screens finals: 2 digits when the value fits, so the active timer can be really big

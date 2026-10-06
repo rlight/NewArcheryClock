@@ -12,6 +12,12 @@ countdown), without the Arduino / K8055 / serial / network-broadcast parts, plus
   phone on the same network: big Start / Next / Pause / Stop / Emergency buttons, a live
   preview of the display, and every setting in plain English.
 
+## Download
+
+**[⬇ Download NewArcheryClock-0.1.0.zip](https://github.com/rlight/NewArcheryClock/raw/main/release/NewArcheryClock-0.1.0.zip)**
+(Windows and Mac). Unzip it and follow `INSTALL.txt`: on Windows run `windows\install.bat`, on a Mac
+right-click `mac/install.command` → Open.
+
 ## Screenshots
 
 ### Range display: Classic theme (looks like the original ArcheryClock)
@@ -123,8 +129,9 @@ instrumental: U.S. Air Force Band) are public domain, from Wikimedia Commons. So
 ## Development
 
 ```bash
-npm start            # node server/server.js  (PORT=… and ARCHERYCLOCK_DATA=… override)
-npm test             # engine tests (node:test)
+npm start                     # node server/server.js  (PORT=… and ARCHERYCLOCK_DATA=… override)
+npm test                      # engine tests (node:test)
+./scripts/make-release.sh     # builds release/NewArcheryClock-<version>.zip (app only, no data/docs/tests)
 ```
 
 No npm packages are needed. `docs/original-spec.md` describes the original program's behaviour;

@@ -1,0 +1,22 @@
+NEW ARCHERYCLOCK — QUICK INSTALL
+================================
+
+WINDOWS 10 / 11
+  1. Unzip this folder somewhere permanent, e.g. C:\ArcheryClock
+  2. Open the "windows" folder and double-click  install.bat  (allow admin access).
+     It installs Node.js if needed, opens the firewall for your local network, and puts an
+     "Archery Clock" shortcut on the desktop.
+  3. Double-click "Archery Clock" on the desktop. The clock opens full screen (Alt+F4 to leave).
+
+MAC
+  1. Unzip this folder somewhere permanent, e.g. your Applications or Documents folder.
+  2. Open the "mac" folder, RIGHT-click  install.command  and choose Open (the first time macOS
+     asks because the file came from the internet). It installs Node.js if needed.
+  3. Double-click  mac/start-clock.command  (right-click > Open the first time).
+     The clock opens full screen (Cmd+Q to leave).
+
+CONTROL IT FROM A PHONE OR TABLET
+  Open the address shown on the control page (Start-up & connection), e.g. http://clock-pc:8765/
+  Default password for other devices: archery  — change it on that page.
+
+Everything else: README.md
