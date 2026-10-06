@@ -12,6 +12,36 @@ countdown), without the Arduino / K8055 / serial / network-broadcast parts, plus
   phone on the same network: big Start / Next / Pause / Stop / Emergency buttons, a live
   preview of the display, and every setting in plain English.
 
+## Screenshots
+
+### Range display: Classic theme (looks like the original ArcheryClock)
+
+| Shooting (CD) | Last 30 seconds | Between ends: time of day |
+|---|---|---|
+| ![Classic, shooting](docs/screenshots/classic-2.png) | ![Classic, warning](docs/screenshots/classic-3.png) | ![Classic, time of day between ends](docs/screenshots/classic-14.png) |
+| **Match-start countdown** | **Emergency stop** | **Alternating finals** |
+| ![Classic, match countdown](docs/screenshots/classic-6.png) | ![Classic, emergency stop](docs/screenshots/classic-7.png) | ![Classic, finals](docs/screenshots/classic-10.png) |
+
+### Range display: Retro LED theme (looks like the Lancaster / Chronotir LED timer)
+
+| Shooting (CD) | Between ends: time of day | Alternating finals |
+|---|---|---|
+| ![Retro LED, shooting](docs/screenshots/retro-led-2.png) | ![Retro LED, time of day](docs/screenshots/retro-led-14.png) | ![Retro LED, finals](docs/screenshots/retro-led-10.png) |
+
+### National anthem
+
+While the anthem plays, the display shows only a waving flag.
+
+![Waving flag during the national anthem](docs/screenshots/anthem-flag.png)
+
+### Control page (any phone, tablet or computer on the network)
+
+| Run the clock | Rounds and F-keys | On a phone |
+|---|---|---|
+| ![Control page, Run tab](docs/screenshots/control-run-desktop.png) | ![Control page, Round tab](docs/screenshots/control-round-desktop.png) | <img src="docs/screenshots/control-run-phone.png" alt="Control page on a phone" width="220"> |
+
+More screenshots of every state are in [`docs/screenshots/`](docs/screenshots/).
+
 ## Set up the clock computer (once)
 
 Runs on **Windows 10/11** and **macOS**. Copy this folder to the computer, then:
