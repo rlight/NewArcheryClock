@@ -8,7 +8,7 @@ PORT=$(python3 -c "import json;print(json.load(open('$DATA/settings.json'))['ser
 NODE=$(command -v node || ls /opt/homebrew/bin/node /usr/local/bin/node 2>/dev/null | head -1)
 if [ -z "$NODE" ]; then echo "Node.js is not installed. Run mac/install.command first."; read -r -p "Press Enter"; exit 1; fi
 
-up() { curl -sf -m 1 "http://localhost:$PORT/api/info" 2>/dev/null | grep -q '"urls"'; }
+up() { curl -sf -m 3 "http://127.0.0.1:$PORT/api/info" 2>/dev/null | grep -q '"urls"'; }
 if ! up; then
   nohup "$NODE" "$ROOT/server/server.js" >"$DATA/server.log" 2>"$DATA/server-error.log" &
   echo $! >"$DATA/server.pid"
@@ -19,7 +19,7 @@ if ! up; then
 fi
 [ "$1" = "--no-display" ] && exit 0
 
-URL="http://localhost:$PORT/display/"
+URL="http://127.0.0.1:$PORT/display/"
 PROFILE="$HOME/Library/Application Support/NewArcheryClock/browser-profile"
 FLAGS=(--kiosk "--app=$URL" --no-first-run --no-default-browser-check --autoplay-policy=no-user-gesture-required "--user-data-dir=$PROFILE")
 for app in "Google Chrome" "Microsoft Edge" "Chromium" "Brave Browser"; do

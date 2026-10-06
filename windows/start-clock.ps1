@@ -20,20 +20,26 @@ $node = (Get-Command node -ErrorAction SilentlyContinue).Source
 if (-not $node) { Write-Host 'Node.js is not installed. Run install.bat first.' -ForegroundColor Red; Read-Host 'Press Enter'; exit 1 }
 
 # Start the server unless it is already answering
-function Test-Clock { try { $null -ne (Invoke-RestMethod "http://localhost:$port/api/info" -TimeoutSec 1).urls } catch { $false } }
+# 127.0.0.1, not "localhost": Windows tries IPv6 first and takes ~2 s to give up on a refused port
+function Test-Clock { try { $null -ne (Invoke-RestMethod "http://127.0.0.1:$port/api/info" -TimeoutSec 3).urls } catch { $false } }
 if (-not (Test-Clock)) {
   $log = Join-Path $data 'server.log'
   Start-Process -FilePath $node -ArgumentList "`"$root\server\server.js`"" -WorkingDirectory $root `
     -WindowStyle Hidden -RedirectStandardOutput $log -RedirectStandardError (Join-Path $data 'server-error.log')
-  for ($i = 0; $i -lt 40 -and -not (Test-Clock); $i++) { Start-Sleep -Milliseconds 250 }
-  if (-not (Test-Clock)) { Write-Host "The clock server did not start. See $data\server-error.log" -ForegroundColor Red; Read-Host 'Press Enter'; exit 1 }
+  for ($i = 0; $i -lt 40 -and -not (Test-Clock); $i++) { Start-Sleep -Milliseconds 500 }
+  if (-not (Test-Clock)) {
+    Write-Host "The clock server did not answer on http://127.0.0.1:$port/" -ForegroundColor Red
+    Write-Host "Server output ($data\server.log):"; Get-Content $log -Tail 15 -ErrorAction SilentlyContinue
+    Write-Host "Errors ($data\server-error.log):"; Get-Content (Join-Path $data 'server-error.log') -Tail 15 -ErrorAction SilentlyContinue
+    Read-Host 'Press Enter'; exit 1
+  }
 }
 
 if ($NoDisplay) { exit 0 }
 
 $edge = @("${env:ProgramFiles(x86)}\Microsoft\Edge\Application\msedge.exe", "$env:ProgramFiles\Microsoft\Edge\Application\msedge.exe") |
   Where-Object { Test-Path $_ } | Select-Object -First 1
-$url = "http://localhost:$port/display/"
+$url = "http://127.0.0.1:$port/display/"
 if (-not $edge) { Start-Process $url; exit 0 }
 
 # A dedicated browser profile, so kiosk mode never collides with a normal Edge window.

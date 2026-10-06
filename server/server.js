@@ -314,15 +314,22 @@ const server = http.createServer((req, res) => {
 });
 
 const port = Number(process.env.PORT) || settings.server.port;
+let triedIPv4Only = false;
 server.on('error', (e) => {
+  if ((e.code === 'EAFNOSUPPORT' || e.code === 'EADDRNOTAVAIL') && !triedIPv4Only) {
+    triedIPv4Only = true;                       // IPv6 switched off on this computer
+    return server.listen(port, '0.0.0.0');
+  }
   if (e.code === 'EADDRINUSE') console.error(`Port ${port} is already used by another program. Change "server.port" in data/settings.json (or set PORT) and start again.`);
   else console.error(e.message);
   process.exit(1);
 });
-server.listen(port, '0.0.0.0', () => {
+// '::' accepts IPv6 and IPv4 on Windows and macOS, so "localhost" works whichever address it resolves to.
+server.on('listening', () => {
   console.log(`New ArcheryClock ${VERSION}`);
   console.log(`  Display:  http://localhost:${port}/display/`);
   for (const u of lanUrls()) console.log(`  Control:  ${u}`);
 });
+server.listen(port, '::');
 
 module.exports = { server, engine };
