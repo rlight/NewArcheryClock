@@ -37,8 +37,11 @@ New-Shortcut (Join-Path ([Environment]::GetFolderPath('CommonDesktopDirectory'))
 Write-Host 'Desktop shortcut: Archery Clock'
 
 if ((Read-Host 'Start the clock automatically when Windows starts? (y/N)') -match '^[yY]') {
-  New-Shortcut (Join-Path ([Environment]::GetFolderPath('Startup')) 'Archery Clock.lnk')
-  Write-Host 'Added to start-up.'
+  # all-users Startup folder: works whichever account signs in (this script runs as admin,
+  # so the per-user folder could be the admin's, not the range account's)
+  Get-ChildItem 'C:\Users\*\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\Archery Clock.lnk' -ErrorAction SilentlyContinue | Remove-Item -ErrorAction SilentlyContinue
+  New-Shortcut (Join-Path ([Environment]::GetFolderPath('CommonStartup')) 'Archery Clock.lnk')
+  Write-Host 'Added to start-up for all users (C:\ProgramData\...\StartUp).'
 }
 if ((Read-Host 'Keep the screen on (no sleep) while plugged in? (Y/n)') -notmatch '^[nN]') {
   powercfg /change monitor-timeout-ac 0

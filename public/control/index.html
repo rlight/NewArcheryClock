@@ -172,6 +172,17 @@
           <label class="anthem-vol">Volume <input type="range" id="anthem-volume" min="0" max="100" step="5" aria-label="Anthem volume"> <span id="anthem-volume-val"></span></label>
         </div>
 
+        <div class="group" id="grp-music" hidden>
+          <h3 class="group-title">Music <span class="muted">on the clock computer</span></h3>
+          <button class="btn wide" id="btn-music-open" type="button">Open Amazon Music</button>
+          <div class="music-row">
+            <button class="btn btn-lg" id="btn-music-prev" type="button" aria-label="Previous track">⏮</button>
+            <button class="btn btn-lg btn-primary" id="btn-music-play" type="button" aria-label="Play or pause">⏯ Play / Pause</button>
+            <button class="btn btn-lg" id="btn-music-next" type="button" aria-label="Next track">⏭</button>
+          </div>
+          <p class="field-help">Works with the music app that is playing on the clock computer (Amazon Music, Spotify …). Pause it yourself before the anthem or a whistle.</p>
+        </div>
+
         <button class="btn emergency" id="btn-emergency" aria-label="Emergency stop — press and hold">
           <span class="em-fill" aria-hidden="true"></span>
           <span class="em-label"><svg viewBox="0 0 24 24" class="ico"><path d="M12 2.8 1.8 20.5h20.4z" fill="currentColor"/><path d="M12 9.5v5" stroke="#b91c1c" stroke-width="2.4" stroke-linecap="round"/><circle cx="12" cy="17.4" r="1.3" fill="#b91c1c"/></svg>

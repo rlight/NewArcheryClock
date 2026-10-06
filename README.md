@@ -58,10 +58,16 @@ Runs on **Windows 10/11** and **macOS**. Copy this folder to the computer, then:
 | Start | **Archery Clock** shortcut (or `windows\start-clock.bat`) | `mac/start-clock.command` |
 | Leave full screen | Alt+F4 | Cmd+Q |
 | Stop everything | `windows\stop-clock.bat` | `mac/stop-clock.command` |
+| Start with the computer | `windows\autostart-on.bat` (all users; asks for admin; off: `autostart-off.bat`) | run `mac/install.command` again and answer **y** |
 
 The display opens full screen in kiosk mode in Edge (Windows) or Chrome/Edge (Mac; Safari works
 but needs one click on the page before it plays sound). The computer is kept awake while the
 clock runs.
+
+**Auto-start not working?** Each launch adds a line to `data/start.log`; if nothing appears after a
+reboot, it never ran. On Windows: run `windows\autostart-on.bat` (also fixes a shortcut left behind
+after moving the folder), check *Settings → Apps → Startup* shows **Archery Clock** as On, and remember
+it only runs after someone signs in. For an unattended PC, turn on automatic sign-in (`netplwiz`).
 
 **Two monitors** (one at each end of the line): mirror the screens: on Windows *Settings →
 System → Display → Duplicate these displays*; on a Mac *System Settings → Displays → Use as →
@@ -125,6 +131,17 @@ waving U.S. flag, then returns to the clock. An emergency stop also stops the an
 Banner* (solo soprano: U.S. Navy Band; choir with band: U.S. Army Field Band; choir and
 instrumental: U.S. Air Force Band) are public domain, from Wikimedia Commons. Sources are in
 `public/anthem/anthems.json`; add another version by dropping the file there and adding an entry.
+
+## Music (private range)
+
+Set *Start-up & connection → Location* to **Private range** and a **Music** panel appears at the
+bottom of the *Run* page: **Open Amazon Music**, **⏮ / ⏯ / ⏭**. The clock computer sends its media
+keys to whatever music app is playing on it (the Amazon Music app, Spotify, …), so music is chosen
+in that app and controlled from your phone. Amazon has no public way for other programs to play its
+music directly, so the clock can't see what's playing or pause it by itself — pause it before the
+anthem or a whistle. On a Mac, the first press asks to allow Accessibility access for the clock.
+Streaming services are licensed for personal use; playing music to club members may still need a
+public-performance licence — that's the club's call.
 
 ## Development
 

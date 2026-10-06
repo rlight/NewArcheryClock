@@ -7,6 +7,9 @@ WINDOWS 10 / 11
      It installs Node.js if needed, opens the firewall for your local network, and puts an
      "Archery Clock" shortcut on the desktop.
   3. Double-click "Archery Clock" on the desktop. The clock opens full screen (Alt+F4 to leave).
+  4. To start it automatically with Windows: double-click  windows\autostart-on.bat  (allow admin access;
+     it adds the clock to the all-users Startup folder)
+     (it runs when someone signs in; for an unattended PC turn on automatic sign-in with netplwiz).
 
 MAC
   1. Unzip this folder somewhere permanent, e.g. your Applications or Documents folder.

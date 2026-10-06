@@ -9,6 +9,7 @@ const path = require('path');
 const { Engine } = require('./engine');
 const cfg = require('./config');
 const auth = require('./auth');
+const media = require('./media');
 
 const VERSION = require('../package.json').version;
 const PUBLIC_DIR = path.join(__dirname, '..', 'public');
@@ -222,6 +223,14 @@ async function handleApi(req, res, url) {
     if (p === '/api/state' && req.method === 'GET') return sendJson(res, 200, snapshot());
     if (p === '/api/command' && req.method === 'POST') {
       const body = await readBody(req);
+      if (body.cmd === 'musicKey' || body.cmd === 'musicOpen') {
+        if (settings.venue !== 'private') return sendJson(res, 403, { ok: false, error: 'Music is only available when Location is set to Private range.' });
+        try {
+          if (body.cmd === 'musicOpen') await media.openApp();
+          else await media.sendKey(body.arg);
+          return sendJson(res, 200, { ok: true, snapshot: snapshot() });
+        } catch (e) { return sendJson(res, 500, { ok: false, error: 'Music control failed: ' + e.message }); }
+      }
       runCommand(body.cmd, body.arg);
       return sendJson(res, 200, { ok: true, snapshot: snapshot() });
     }

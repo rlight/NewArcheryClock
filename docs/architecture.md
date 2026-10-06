@@ -81,6 +81,8 @@ in settings. Default password: `archery`. 5 wrong tries from an address → one 
 | `loadPreset` | `"shiftF1"`…`"shiftF12"` | Shift+F1…F12 |
 | `loadScenario` | `"F1"`…`"F12"` | F1…F12 (falls back to matching preset if empty) |
 | `testSound` | – | plays 1 signal on displays |
+| `musicKey` | `playPause` / `next` / `previous` | media key on the clock computer (only when `settings.venue` = `private`) |
+| `musicOpen` | – | opens the Amazon Music app (or music.amazon.com) on the clock computer (private only) |
 | `anthemPlay` | anthem id (optional; default `settings.anthem.choice`) | displays play the national anthem; emergency stops it |
 | `anthemStop` | – | stop the anthem |
 
@@ -158,7 +160,8 @@ end of end 3, stop 3, emergency 4, finals switch 1, finals end 3, manual per set
   display: { theme: "classic", timeFormat: "sec", trafficLight: true, trafficSide: "right",
              showHints: true, hideIcons: false, bannerText: "", clock: "off", clock24h: false },
   sound: { enabled: true, sound: "file:Default.wav", volume: 1 },
-  anthem: { choice: "navy-solo", volume: 1 },   // sound ids from shared/sound.js or "file:<name>.wav" in public/sounds/custom
+  anthem: { choice: "navy-solo", volume: 1 },
+  venue: "public" | "private",   // private shows the Music panel   // sound ids from shared/sound.js or "file:<name>.wav" in public/sounds/custom
   start: { scenario: "shiftF5", countdownMinutes: 4, countdownBetweenEnds: false },
   round: {
     system: "fita",

@@ -7,6 +7,8 @@ $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
 $data = Join-Path $root 'data'
 New-Item -ItemType Directory -Force -Path $data | Out-Null
+# one line per launch, so it's easy to see whether auto-start ran
+Add-Content -Path (Join-Path $data 'start.log') -Value ("{0:yyyy-MM-dd HH:mm:ss} start-clock ({1})" -f (Get-Date), $(if ($NoDisplay) { 'no display' } else { 'with display' })) -ErrorAction SilentlyContinue
 
 $port = 8765
 $settingsFile = Join-Path $data 'settings.json'

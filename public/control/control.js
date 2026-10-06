@@ -968,6 +968,11 @@ function buildStartup() {
   onSync(renderInfo);
   root.append(card('Connect another device', 'Open one of these on a phone or tablet on the same network to control the clock.', urls, kv));
   root.append(passwordCard());
+  root.append(card('Location', 'Where the clock is used.',
+    field('This clock is at', segmented({ path: 'venue', label: 'Location', options: [
+      { value: 'public', label: 'Public location' }, { value: 'private', label: 'Private range' }] })),
+    h('p', { class: 'field-help' }, 'Private range adds Music controls (Amazon Music or another music app on the clock computer) to the Run page. ' +
+      'Streaming services are licensed for personal use; playing music to club members may still need a public-performance licence.')));
 
   root.append(card('Server', null, h('div', { class: 'fields' },
     numberField({ label: 'Port', path: 'server.port', min: 1, max: 65535, unit: '', set: setValue, help: 'Takes effect after the clock program is restarted.' }))));
@@ -1294,6 +1299,17 @@ function setConn(state) {
 
 /* ------------------------------------------------------------------ national anthem (Run tab) */
 
+function wireMusic() {
+  const go = async (cmd, arg) => {
+    try { await api.command(cmd, arg); } catch (e) { toast(e.message, 'err', 4000); }
+  };
+  $('#btn-music-open').addEventListener('click', () => go('musicOpen'));
+  $('#btn-music-play').addEventListener('click', () => go('musicKey', 'playPause'));
+  $('#btn-music-next').addEventListener('click', () => go('musicKey', 'next'));
+  $('#btn-music-prev').addEventListener('click', () => go('musicKey', 'previous'));
+  onSync((s) => { $('#grp-music').hidden = s.venue !== 'private'; });
+}
+
 function wireAnthem() {
   $('#btn-anthem-play').addEventListener('click', () => send('anthemPlay', S.settings && S.settings.anthem ? S.settings.anthem.choice : undefined));
   $('#btn-anthem-stop').addEventListener('click', () => send('anthemStop'));
@@ -1309,6 +1325,7 @@ function wireAnthem() {
 }
 
 function renderAnthem() {
+  $('#grp-music').hidden = !(S.settings && S.settings.venue === 'private');
   const grp = $('#grp-anthem');
   const list = S.anthems || [];
   grp.hidden = !list.length;
@@ -1343,6 +1360,7 @@ function renderAnthem() {
 async function boot() {
   wireRun();
   wireAnthem();
+  wireMusic();
   document.addEventListener('keydown', onKey);
   window.addEventListener('hashchange', route);
   route();

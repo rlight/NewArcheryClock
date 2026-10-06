@@ -37,6 +37,8 @@ const DEFAULTS = {
   },
   sound: { enabled: true, sound: 'file:Default.wav', volume: 1 },
   anthem: { choice: 'navy-solo', volume: 1 },
+  // 'private' shows the music controls (operator's choice; see README for the licensing note)
+  venue: 'public',
   start: { scenario: 'shiftF5', countdownMinutes: 4, countdownBetweenEnds: false },
   round: DEFAULT_ROUND,
 };
@@ -174,6 +176,7 @@ function validate(s, d = DEFAULTS) {
       sound: typeof snd.sound === 'string' && /^(file:[\w .-]{1,80}\.wav|[a-z0-9-]{1,30})$/i.test(snd.sound) ? snd.sound : d.sound.sound,
       volume: Math.min(1, Math.max(0, Number.isFinite(Number(snd.volume)) ? Number(snd.volume) : d.sound.volume)),
     },
+    venue: oneOf(s.venue, ['public', 'private'], d.venue),
     anthem: {
       choice: typeof an.choice === 'string' && /^[a-z0-9-]{1,40}$/.test(an.choice) ? an.choice : d.anthem.choice,
       volume: Math.min(1, Math.max(0, Number.isFinite(Number(an.volume)) ? Number(an.volume) : d.anthem.volume)),
