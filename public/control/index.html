@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0c0f14">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>ArcheryClock Control</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='15' fill='%23f5c518'/%3E%3Ccircle cx='16' cy='16' r='10.5' fill='%23ef4444'/%3E%3Ccircle cx='16' cy='16' r='6' fill='%233b82f6'/%3E%3Ccircle cx='16' cy='16' r='2.4' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="control.css">
+<script>
+  // Apply the saved appearance before first paint (no flash).
+  try { const t = localStorage.getItem('nac.appearance'); if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t; } catch {}
+</script>
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="#run" aria-label="ArcheryClock">
+    <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="15" fill="#f5c518"/><circle cx="16" cy="16" r="10.5" fill="#ef4444"/><circle cx="16" cy="16" r="6" fill="#3b82f6"/><circle cx="16" cy="16" r="2.4" fill="#fff"/></svg>
+    <span class="brand-name">ArcheryClock</span>
+  </a>
+  <nav class="tabs" id="tabs" aria-label="Sections">
+    <a href="#run" data-tab="run"><svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z"/></svg><span>Run</span></a>
+    <a href="#round" data-tab="round"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5" fill="none" stroke-width="2"/><circle cx="12" cy="12" r="4.5" fill="none" stroke-width="2"/><circle cx="12" cy="12" r="1.6"/></svg><span>Round</span></a>
+    <a href="#scenarios" data-tab="scenarios"><svg viewBox="0 0 24 24"><path d="M12 3 2.5 8 12 13l9.5-5z"/><path d="m4.6 11.4-2.1 1.1L12 17.5l9.5-5-2.1-1.1L12 15.3z" opacity=".7"/><path d="m4.6 15.4-2.1 1.1L12 21.5l9.5-5-2.1-1.1L12 19.3z" opacity=".45"/></svg><span>Scenarios</span></a>
+    <a href="#display" data-tab="display"><svg viewBox="0 0 24 24"><rect x="2.5" y="4" width="19" height="12.5" rx="2" fill="none" stroke-width="2"/><path d="M8 20.5h8M12 16.5v4" fill="none" stroke-width="2" stroke-linecap="round"/></svg><span>Display</span></a>
+    <a href="#sound" data-tab="sound"><svg viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5v14l-4.5-4.5H4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.3 5.8a9 9 0 0 1 0 12.4" fill="none" stroke-width="2" stroke-linecap="round"/></svg><span>Sound</span></a>
+    <a href="#startup" data-tab="startup"><svg viewBox="0 0 24 24"><path d="M12 3v8" fill="none" stroke-width="2.2" stroke-linecap="round"/><path d="M7 6.3a8 8 0 1 0 10 0" fill="none" stroke-width="2.2" stroke-linecap="round"/></svg><span>Start-up</span></a>
+  </nav>
+  <div class="live" id="live" title="Live clock state">
+    <span class="conn" id="conn" data-state="connecting" title="Connecting…"></span>
+    <span class="phase-chip" id="hdr-phase" data-phase="wait">—</span>
+    <span class="hdr-time" id="hdr-time" data-color="idle">––</span>
+  </div>
+</header>
+
+<div class="offline-banner" id="offline" hidden>Lost connection to the clock — reconnecting…</div>
+
+<main id="main">
+
+  <!-- ===================== RUN ===================== -->
+  <section class="view" id="view-run" data-view="run" tabindex="-1">
+    <div class="run-grid">
+      <div class="run-col run-col-left">
+        <div class="preview-card">
+          <div class="preview" data-src="/display/?preview=1" data-label="Live display"></div>
+        </div>
+        <div class="status-card">
+          <div class="status-line" id="status-line">
+            <span class="pill" id="st-system">—</span>
+            <span class="st-item" id="st-end"></span>
+            <span class="st-item" id="st-turn"></span>
+            <span class="st-item st-phase" id="st-phase"></span>
+            <span class="st-item st-time" id="st-time"></span>
+          </div>
+          <p class="hint" id="hint">Waiting for the clock…</p>
+        </div>
+        <details class="shortcuts card-lite">
+          <summary>Keyboard shortcuts</summary>
+          <dl class="kbd-list">
+            <dt><kbd>Space</kbd> <kbd>PgDn</kbd></dt><dd>Start / next / resume</dd>
+            <dt><kbd>P</kbd></dt><dd>Pause / resume</dd>
+            <dt><kbd>S</kbd></dt><dd>Stop</dd>
+            <dt><kbd>E</kbd> <kbd>PgUp</kbd></dt><dd>Emergency (finals: left side / clear)</dd>
+            <dt><kbd>1</kbd>–<kbd>6</kbd></dt><dd>Shoot-off with 1–6 arrows</dd>
+            <dt><kbd>C</kbd></dt><dd>Match countdown</dd>
+            <dt><kbd>↑</kbd> <kbd>↓</kbd></dt><dd>End up / down</dd>
+            <dt><kbd>←</kbd> <kbd>→</kbd></dt><dd>Turn down / up (finals: side)</dd>
+            <dt><kbd>M</kbd> <kbd>H</kbd></dt><dd>Seconds/minutes · hide icons</dd>
+            <dt><kbd>F1</kbd>–<kbd>F12</kbd></dt><dd>Load your scenario (<kbd>Shift</kbd>: built-in)</dd>
+            <dt><kbd>R</kbd> <kbd>Y</kbd> <kbd>G</kbd></dt><dd>Manual: red / yellow / green light</dd>
+            <dt><kbd>1</kbd>–<kbd>3</kbd></dt><dd>Manual: send 1–3 signals</dd>
+          </dl>
+        </details>
+      </div>
+
+      <div class="run-col run-col-right">
+        <div class="actions" id="grp-main">
+          <button class="btn btn-xl btn-go" id="btn-next" data-cmd="next">Start end</button>
+          <div class="actions-row">
+            <button class="btn btn-lg" id="btn-pause" data-cmd="pause">
+              <svg viewBox="0 0 24 24" class="ico"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
+              <span>Pause</span></button>
+            <button class="btn btn-lg" id="btn-stop" data-cmd="stop">
+              <svg viewBox="0 0 24 24" class="ico"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
+              <span>Stop</span></button>
+          </div>
+        </div>
+
+        <div class="group" id="grp-manual" hidden>
+          <h3 class="group-title">Lights</h3>
+          <div class="lamp-row">
+            <button class="btn lamp lamp-red" data-cmd="manualLight" data-arg="red"><i></i>Red</button>
+            <button class="btn lamp lamp-yellow" data-cmd="manualLight" data-arg="orange"><i></i>Yellow</button>
+            <button class="btn lamp lamp-green" data-cmd="manualLight" data-arg="green"><i></i>Green</button>
+          </div>
+          <h3 class="group-title">Signals</h3>
+          <div class="seg-row">
+            <button class="btn" data-cmd="manualSignal" data-arg="1">1 signal</button>
+            <button class="btn" data-cmd="manualSignal" data-arg="2">2 signals</button>
+            <button class="btn" data-cmd="manualSignal" data-arg="3">3 signals</button>
+          </div>
+        </div>
+
+        <div class="group" id="grp-finals" hidden>
+          <h3 class="group-title">Shooting side</h3>
+          <div class="side-row">
+            <button class="btn btn-lg side-btn" id="btn-left" data-cmd="finalsSide" data-arg="left">
+              <svg viewBox="0 0 24 24" class="ico"><path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span>Left</span><small id="lbl-left"></small></button>
+            <button class="btn btn-lg side-btn" id="btn-right" data-cmd="finalsSide" data-arg="right">
+              <span>Right</span><small id="lbl-right"></small>
+              <svg viewBox="0 0 24 24" class="ico"><path d="m9 5 7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          </div>
+          <div class="seg-row two">
+            <button class="btn" id="btn-swap" data-cmd="finalsSwap">Swap primary</button>
+            <button class="btn" id="btn-clear" data-cmd="finalsClear">Clear choice</button>
+          </div>
+        </div>
+
+        <div class="group" id="grp-counters">
+          <div class="counters">
+            <div class="counter" id="ctr-end">
+              <span class="counter-label" id="lbl-end">End</span>
+              <div class="stepper big">
+                <button class="btn" data-cmd="endDown" aria-label="End down">−</button>
+                <output id="val-end">–</output>
+                <button class="btn" data-cmd="endUp" aria-label="End up">+</button>
+              </div>
+            </div>
+            <div class="counter" id="ctr-turn">
+              <span class="counter-label">Turn</span>
+              <div class="stepper big">
+                <button class="btn" data-cmd="turnDown" aria-label="Turn down">−</button>
+                <output id="val-turn">–</output>
+                <button class="btn" data-cmd="turnUp" aria-label="Turn up">+</button>
+              </div>
+            </div>
+          </div>
+          <button class="btn btn-quiet wide" id="btn-reset" data-cmd="resetEnd">
+            <svg viewBox="0 0 24 24" class="ico"><path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M4 3.5v4.5h4.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Reset to first end</button>
+        </div>
+
+        <div class="group" id="grp-extras">
+          <h3 class="group-title">Shoot-off <span class="muted">arrows</span></h3>
+          <div class="so-row">
+            <button class="btn" data-cmd="shootoff" data-arg="1">1</button>
+            <button class="btn" data-cmd="shootoff" data-arg="2">2</button>
+            <button class="btn" data-cmd="shootoff" data-arg="3">3</button>
+            <button class="btn" data-cmd="shootoff" data-arg="4">4</button>
+            <button class="btn" data-cmd="shootoff" data-arg="5">5</button>
+            <button class="btn" data-cmd="shootoff" data-arg="6">6</button>
+          </div>
+          <button class="btn btn-countdown wide" id="btn-countdown" data-cmd="countdown">
+            <svg viewBox="0 0 24 24" class="ico"><path d="M7 3h10M7 21h10M8 3c0 5 8 5 8 9s-8 4-8 9M16 3c0 5-8 5-8 9s8 4 8 9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            <span>Match countdown <small id="lbl-countdown"></small></span></button>
+        </div>
+
+        <div class="group" id="grp-anthem">
+          <h3 class="group-title">National anthem <span class="muted" id="anthem-status"></span></h3>
+          <div class="anthem-versions" id="anthem-versions" role="group" aria-label="Anthem version"></div>
+          <div class="anthem-row">
+            <button class="btn btn-primary btn-lg" id="btn-anthem-play" type="button">
+              <svg viewBox="0 0 24 24" class="ico"><path d="M8 5.5v13l11-6.5z" fill="currentColor"/></svg>
+              <span>Play anthem</span></button>
+            <button class="btn btn-danger btn-lg" id="btn-anthem-stop" type="button">
+              <svg viewBox="0 0 24 24" class="ico"><rect x="6.5" y="6.5" width="11" height="11" rx="1.5" fill="currentColor"/></svg>
+              <span>Stop anthem</span></button>
+          </div>
+          <div class="anthem-progress" id="anthem-progress" hidden><span id="anthem-bar"></span></div>
+          <label class="anthem-vol">Volume <input type="range" id="anthem-volume" min="0" max="100" step="5" aria-label="Anthem volume"> <span id="anthem-volume-val"></span></label>
+        </div>
+
+        <button class="btn emergency" id="btn-emergency" aria-label="Emergency stop — press and hold">
+          <span class="em-fill" aria-hidden="true"></span>
+          <span class="em-label"><svg viewBox="0 0 24 24" class="ico"><path d="M12 2.8 1.8 20.5h20.4z" fill="currentColor"/><path d="M12 9.5v5" stroke="#b91c1c" stroke-width="2.4" stroke-linecap="round"/><circle cx="12" cy="17.4" r="1.3" fill="#b91c1c"/></svg>
+          EMERGENCY</span>
+          <small class="em-sub">press and hold</small>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== ROUND ===================== -->
+  <section class="view" id="view-round" data-view="round" tabindex="-1" hidden>
+    <div class="page-head">
+      <h1>Round</h1>
+      <p class="summary" id="round-summary"></p>
+      <p class="note">Changing the round puts the clock back to end 1.</p>
+    </div>
+    <div id="round-form"></div>
+  </section>
+
+  <!-- ===================== SCENARIOS ===================== -->
+  <section class="view" id="view-scenarios" data-view="scenarios" tabindex="-1" hidden>
+    <div class="page-head">
+      <h1>Scenarios</h1>
+      <p class="lede">Save the current round into a slot and load it with one tap — or press <kbd>F1</kbd>–<kbd>F12</kbd> on the clock PC.</p>
+    </div>
+    <h2 class="sec-title">Your scenarios</h2>
+    <div class="slot-grid" id="slot-grid"></div>
+    <p class="note">An empty slot loads the built-in round with the same number (F5 → Shift+F5).</p>
+    <h2 class="sec-title">Built-in rounds <span class="muted">Shift+F1 … Shift+F12</span></h2>
+    <div class="preset-grid" id="preset-grid"></div>
+  </section>
+
+  <!-- ===================== DISPLAY ===================== -->
+  <section class="view" id="view-display" data-view="display" tabindex="-1" hidden>
+    <div class="page-head"><h1>Display</h1><p class="lede">How the range screen looks. Changes show on the display immediately.</p></div>
+    <div id="display-form"></div>
+  </section>
+
+  <!-- ===================== SOUND ===================== -->
+  <section class="view" id="view-sound" data-view="sound" tabindex="-1" hidden>
+    <div class="page-head"><h1>Sound</h1><p class="lede">Signals are played by the clock PC, not by this device.</p></div>
+    <div id="sound-form"></div>
+  </section>
+
+  <!-- ===================== START-UP ===================== -->
+  <section class="view" id="view-startup" data-view="startup" tabindex="-1" hidden>
+    <div class="page-head"><h1>Start-up &amp; connection</h1></div>
+    <div id="startup-form"></div>
+  </section>
+</main>
+
+<div class="toast-host" id="toasts" aria-live="polite"></div>
+
+<dialog class="modal" id="modal">
+  <form method="dialog" class="modal-body">
+    <h2 id="modal-title"></h2>
+    <p id="modal-text"></p>
+    <input id="modal-input" type="text" autocomplete="off" maxlength="60" hidden>
+    <div class="modal-actions">
+      <button class="btn" value="cancel" id="modal-cancel">Cancel</button>
+      <button class="btn btn-primary" value="ok" id="modal-ok">OK</button>
+    </div>
+  </form>
+</dialog>
+
+<script type="module" src="control.js"></script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+[
+  {
+    "id": "navy-solo",
+    "title": "Solo singer",
+    "performer": "Soprano MU1 Amy Broadbent, United States Navy Band",
+    "file": "us-navy-solo.oga",
+    "durationSec": 88,
+    "source": "https://commons.wikimedia.org/wiki/File:%22The_Star-Spangled_Banner%22_-_Solo_vocalist_-_U.S._Navy_Band.oga",
+    "licence": "Public domain (work of the U.S. federal government)"
+  },
+  {
+    "id": "army-chorus",
+    "title": "Choir with band",
+    "performer": "Concert Band and Soldiers' Chorus, United States Army Field Band",
+    "file": "us-army-field-band-chorus.oga",
+    "durationSec": 89,
+    "source": "https://commons.wikimedia.org/wiki/File:%22The_Star-Spangled_Banner%22_-_Choral_with_band_accompaniment_-_United_States_Army_Field_Band.oga",
+    "licence": "Public domain (work of the U.S. federal government)"
+  },
+  {
+    "id": "airforce-choral",
+    "title": "Choir",
+    "performer": "Concert Band, United States Air Force Band",
+    "file": "us-air-force-band-choral.mp3",
+    "durationSec": 78,
+    "source": "https://commons.wikimedia.org/wiki/File:The_Star-Spangled_Banner_(choral)_-_Concert_Band_-_United_States_Air_Force_Band.mp3",
+    "licence": "Public domain (work of the U.S. federal government)"
+  },
+  {
+    "id": "airforce-instrumental",
+    "title": "Instrumental",
+    "performer": "Concert Band, United States Air Force Band",
+    "file": "us-air-force-band-instrumental.mp3",
+    "durationSec": 75,
+    "source": "https://commons.wikimedia.org/wiki/File:The_Star-Spangled_Banner_(instrumental)_-_Concert_Band_-_United_States_Air_Force_Band.mp3",
+    "licence": "Public domain (work of the U.S. federal government)"
+  }
+]

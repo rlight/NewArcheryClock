@@ -1,0 +1,25 @@
+/* Retro LED theme — the board itself is one SVG built by theme.js. */
+.theme-retro-led {
+  /* the screen is the LED board's face, edge to edge */
+  background: #0c0c0d;
+}
+.theme-retro-led .rl-svg {
+  position: absolute; inset: 0; width: 100%; height: 100%; display: block;
+}
+.theme-retro-led .rl-silk {
+  font-family: "Arial Narrow", "Helvetica Neue", Arial, Helvetica, sans-serif;
+  font-weight: 700;
+  fill: #9c9c96;
+  letter-spacing: .12em;
+}
+.theme-retro-led .rl-banner {
+  font-family: "Arial Narrow", "Helvetica Neue", Arial, Helvetica, sans-serif;
+  font-weight: 700;
+  fill: #c9c9c2;
+  letter-spacing: .08em;
+}
+.theme-retro-led .rl-move {
+  transform-box: view-box;
+  transform-origin: 0 0;
+  transition: transform .45s cubic-bezier(.3,.7,.3,1);
+}

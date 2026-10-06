@@ -1,0 +1,6 @@
+The .wav files in this folder (Default = ac1.wav, the factory default sound; beep1-7, bell1, buzzer1-8, flute1, horn1-6, oink1,
+ploink1, whistle1) are the signal sounds from ArcheryClock 2.6.1 by Henk Jegers (https://www.archeryclock.com/), licensed under
+the GNU General Public License v3 or later (https://www.gnu.org/licenses/gpl-3.0.html).
+
+If you distribute this clock with these files included, the distribution must comply with the GPL v3.
+Delete them to use only the clock's built-in synthesised sounds.

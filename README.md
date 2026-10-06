@@ -1,2 +1,108 @@
-# NewArcheryClock
-updated version of ArcheryClock
+# New ArcheryClock
+
+A rebuild of [ArcheryClock](https://www.archeryclock.com/) 2.4 for a Windows or Mac computer driving
+the range display. Same timing rules as the original (target rounds with A–F details and
+AB-CD rotation, double ends, shoot-offs, alternating finals, 25m1P, manual lights, match-start
+countdown), without the Arduino / K8055 / serial / network-broadcast parts, plus:
+
+- **Themes** for the full-screen display: **Classic** (looks like ArcheryClock) and
+  **Retro LED** (looks like the Lancaster / Chronotir physical LED timer). Add your own in
+  `public/themes/`.
+- A **web control and settings page** that works on the clock PC, a laptop, a tablet or a
+  phone on the same network: big Start / Next / Pause / Stop / Emergency buttons, a live
+  preview of the display, and every setting in plain English.
+
+## Set up the clock computer (once)
+
+Runs on **Windows 10/11** and **macOS**. Copy this folder to the computer, then:
+
+| | Windows | Mac |
+|---|---|---|
+| Install | Double-click **`windows\install.bat`** (asks for admin rights). Installs Node.js if needed, opens port 8765 in the firewall for Private networks, adds an **Archery Clock** desktop shortcut, and can add it to start-up and stop the screen sleeping. | Double-click **`mac/install.command`**. Installs Node.js with Homebrew if needed (or points you to nodejs.org) and can start the clock at login. The first time a phone connects, allow `node` to accept incoming connections. |
+| Start | **Archery Clock** shortcut (or `windows\start-clock.bat`) | `mac/start-clock.command` |
+| Leave full screen | Alt+F4 | Cmd+Q |
+| Stop everything | `windows\stop-clock.bat` | `mac/stop-clock.command` |
+
+The display opens full screen in kiosk mode in Edge (Windows) or Chrome/Edge (Mac; Safari works
+but needs one click on the page before it plays sound). The computer is kept awake while the
+clock runs.
+
+**Two monitors** (one at each end of the line): mirror the screens: on Windows *Settings →
+System → Display → Duplicate these displays*; on a Mac *System Settings → Displays → Use as →
+Mirror*. The clock shows on both.
+
+## Use it
+
+- Open the control page from any device on the same network: `http://<clock-computer-name>:8765/`
+  (the exact addresses are on the control page under *Start-up & connection*, and are printed
+  in `data/server.log`).
+- **Password:** phones, tablets and other computers must sign in. The default password is
+  **`archery`**: change it on the control page under *Start-up & connection → Password for other
+  devices*. The clock computer itself never asks. A device stays signed in for 30 days; changing the
+  password signs every other device out. Forgot it? On the clock computer, set a new one on that
+  same page (no old password needed there), or delete `data/auth.json` to go back to `archery`.
+- If port 8765 is taken, change `server.port` on the control page (*Start-up & connection*) and
+  restart the clock.
+
+### Keyboard (on the clock computer's display)
+
+| Key | Action |
+|---|---|
+| Space | Start the end / next detail / finish early / resume |
+| P | Pause / resume |
+| S | Stop (repeats the current detail) |
+| E | Emergency stop |
+| PageDown / PageUp | Next / emergency (presenter remotes); in finals: choose right / left |
+| 1–6 | Shoot-off with that many arrows |
+| C | Match-start countdown |
+| ↑ / ↓ | End + / − (finals: arrow counter) |
+| → / ← | Detail + / − (finals: choose right / left side) |
+| M | Seconds ↔ minutes |
+| H | Hide / show labels and hints |
+| F1–F12 | Load your saved scenario |
+| Shift+F1–F12 | Load a built-in preset (Shift+F5 = AB-CD, the default) |
+| R / Y / G | Manual mode: switch the light to red / yellow / green (with its signals) |
+| 1 / 2 / 3 | Manual mode: send that many signals (other modes: shoot-off) |
+
+## Themes
+
+A theme is a folder in `public/themes/<id>/` with `theme.json` (name, description),
+`theme.css` and `theme.js` (an ES module with `mount`, `render(snapshot)` and `unmount`).
+The snapshot it receives is documented in [`docs/architecture.md`](docs/architecture.md).
+New themes appear in the control page automatically. Try any theme without a server at
+`/display/?mock=1&theme=<id>`.
+
+## Sounds
+
+The original ArcheryClock 2.6.1 signal sounds (buzzer1–8, beep1–7, horn1–6, bell1, flute1, oink1,
+ploink1, whistle1) are in `public/sounds/custom/`. **Default** (`Default.wav`, 2.6.1's factory sound `ac1.wav`) is
+selected out of the box and plays exactly as recorded, at full volume.
+They are GPL v3 (see `ORIGINAL-SOUNDS.txt` there). The clock also has built-in synthesised
+sounds (buzzer, beep, horn, whistle, bell, soft). To add your own recording, drop a `.wav` file
+into `public/sounds/custom/` and pick it under *Sound*.
+
+## National anthem
+
+The *Run* tab has a **National anthem** panel: pick a version, **Play anthem**, **Stop anthem**,
+and a volume slider. The clock computer plays it, and while it plays the display shows only a full-screen
+waving U.S. flag, then returns to the clock. An emergency stop also stops the anthem. The four recordings of *The Star-Spangled
+Banner* (solo soprano: U.S. Navy Band; choir with band: U.S. Army Field Band; choir and
+instrumental: U.S. Air Force Band) are public domain, from Wikimedia Commons. Sources are in
+`public/anthem/anthems.json`; add another version by dropping the file there and adding an entry.
+
+## Development
+
+```bash
+npm start            # node server/server.js  (PORT=… and ARCHERYCLOCK_DATA=… override)
+npm test             # engine tests (node:test)
+```
+
+No npm packages are needed. `docs/original-spec.md` describes the original program's behaviour;
+`docs/architecture.md` is the contract between the server, the display themes and the control page.
+Settings and saved scenarios live in `data/` (not in git).
+
+## Licence
+
+GNU General Public License v3.0 (see `LICENSE`). Behaviour is modelled on ArcheryClock by Henk
+Jegers (GPL v3); the original's signal sounds in `public/sounds/custom/` are used under the same
+licence. The anthem recordings in `public/anthem/` are public domain (U.S. military bands).

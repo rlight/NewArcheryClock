@@ -1,0 +1,12 @@
+{
+  "name": "new-archery-clock",
+  "version": "0.1.0",
+  "description": "Archery competition countdown clock: full-screen display with themes and a web control/settings GUI.",
+  "private": true,
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "test": "node --test tests/*.test.js"
+  },
+  "engines": { "node": ">=20" }
+}
