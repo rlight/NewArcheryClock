@@ -5,9 +5,9 @@ the range display. Same timing rules as the original (target rounds with A–F d
 AB-CD rotation, double ends, shoot-offs, alternating finals, 25m1P, manual lights, match-start
 countdown), without the Arduino / K8055 / serial / network-broadcast parts, plus:
 
-- **Themes** for the full-screen display: **Classic** (looks like ArcheryClock) and
-  **Retro LED** (looks like the Lancaster / Chronotir physical LED timer). Add your own in
-  `public/themes/`.
+- **Themes** for the full-screen display: **Classic** (looks like ArcheryClock), **Retro LED**
+  (looks like the Lancaster / Chronotir physical LED timer), **LPYA Sunset**, **Stadium**,
+  **Daylight** and **Halloween**. Add your own in `public/themes/`.
 - A **web control and settings page** that works on the clock PC, a laptop, a tablet or a
   phone on the same network: big Start / Next / Pause / Stop / Emergency buttons, a live
   preview of the display, and every setting in plain English.
@@ -33,6 +33,18 @@ right-click `mac/install.command` → Open.
 | Shooting (CD) | Between ends: time of day | Alternating finals |
 |---|---|---|
 | ![Retro LED, shooting](docs/screenshots/retro-led-2.png) | ![Retro LED, time of day](docs/screenshots/retro-led-14.png) | ![Retro LED, finals](docs/screenshots/retro-led-10.png) |
+
+### More themes
+
+| LPYA Sunset (lpya.org colours) | Stadium (scoreboard) |
+|---|---|
+| ![LPYA Sunset theme, shooting](docs/screenshots/lpya-sunset-2.png) | ![Stadium theme, shooting](docs/screenshots/stadium-2.png) |
+| ![LPYA Sunset theme, between ends](docs/screenshots/lpya-sunset-14.png) | ![Stadium theme, last 30 seconds](docs/screenshots/stadium-3.png) |
+| **Daylight (most visible outdoors)** | **Halloween** |
+| ![Daylight theme, shooting](docs/screenshots/daylight-2.png) | ![Halloween theme, shooting](docs/screenshots/halloween-2.png) |
+| ![Daylight theme, last 30 seconds](docs/screenshots/daylight-3.png) | ![Halloween theme, between ends](docs/screenshots/halloween-14.png) |
+
+Pick one on the control page under *Display → Theme*; the display switches immediately.
 
 ### National anthem
 
