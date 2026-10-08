@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.3
+
+- **Halloween theme** (Display tab → Theme): haunted night with a full moon, bats, fog, a graveyard and
+  jack-o'-lanterns as the traffic light; the big numbers glow in the phase colour. Looks best with the
+  "Chiller" font (installed with Microsoft Office on Windows); falls back to Impact.
+
 ## 0.1.2
 
 - **Three new display themes** (Display tab → Theme):
