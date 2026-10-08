@@ -112,8 +112,14 @@ function isRunning(s) {
   return ['red', 'green', 'orange', 'countdown'].includes(s.phase) && !s.paused && !s.hold;
 }
 
+let loadedVersion = null;
 function onSnapshot(snap) {
   if (!snap || typeof snap !== 'object') return;
+  // after a self-update the server reports a new version: reload to pick up the new display and themes
+  if (snap.version && !MOCK) {
+    if (loadedVersion && snap.version !== loadedVersion) { location.reload(); return; }
+    loadedVersion = snap.version;
+  }
   if (lastSnapshot && !MOCK && typeof snap.seq === 'number' && typeof lastSnapshot.seq === 'number'
       && snap.seq < lastSnapshot.seq && snap.serverTime <= lastSnapshot.serverTime) return; // stale
   lastSnapshot = snap;

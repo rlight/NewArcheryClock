@@ -10,6 +10,7 @@ const { Engine } = require('./engine');
 const cfg = require('./config');
 const auth = require('./auth');
 const media = require('./media');
+const updaterLib = require('./updater');
 
 const VERSION = require('../package.json').version;
 const PUBLIC_DIR = path.join(__dirname, '..', 'public');
@@ -49,6 +50,28 @@ const clients = new Set();
 let signalId = 0;
 let pushPending = true;
 
+// ---------------------------------------------------------------- self-update (server/updater.js)
+const updater = updaterLib.create({
+  version: VERSION,
+  dataDir: cfg.DATA_DIR,
+  getSettings: () => settings,
+  // never replace the clock in the middle of an end
+  canInstall: () => (engine.phase !== 'wait' ? 'An end is running. Install the update between ends.'
+    : anthem ? 'The national anthem is playing.' : null),
+  onChange: () => { pushPending = true; },
+});
+const DAY = 24 * 3600 * 1000;
+setTimeout(async () => {
+  await updater.check();
+  const st = updater.state();
+  if (st.available && settings.update.autoInstallAtStartup) {
+    updater.log(`auto-install at start-up: ${VERSION} -> ${st.latest}`);
+    const err = await updater.install({ port: server.address().port });
+    if (err) updater.log(`auto-install skipped: ${err}`);
+  }
+}, 8000);
+setInterval(() => updater.check(), DAY).unref();
+
 const engine = new Engine(settings, monotonic(), {
   onSignal: (count) => { if (settings.sound.enabled) broadcast('signal', { id: ++signalId, count }); },
   onChange: () => { pushPending = true; },
@@ -58,7 +81,8 @@ const engine = new Engine(settings, monotonic(), {
 
 let seq = 0;
 function snapshot() {
-  return { seq: ++seq, serverTime: Date.now(), ...engine.snapshot(monotonic()), anthem: anthemSnapshot() };
+  return { seq: ++seq, serverTime: Date.now(), version: VERSION, ...engine.snapshot(monotonic()), anthem: anthemSnapshot(),
+    update: { available: updater.state().available, latest: updater.state().latest, status: updater.state().status } };
 }
 function sse(res, event, data) { res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`); }
 function broadcast(event, data) { for (const res of clients) sse(res, event, data); }
@@ -254,7 +278,13 @@ async function handleApi(req, res, url) {
     if (p === '/api/themes' && req.method === 'GET') return sendJson(res, 200, listThemes());
     if (p === '/api/anthems' && req.method === 'GET') return sendJson(res, 200, listAnthems());
     if (p === '/api/sounds' && req.method === 'GET') return sendJson(res, 200, { custom: listCustomSounds() });
-    if (p === '/api/info' && req.method === 'GET') return sendJson(res, 200, { version: VERSION, urls: lanUrls(), hostname: os.hostname() });
+    if (p === '/api/info' && req.method === 'GET') return sendJson(res, 200, { version: VERSION, urls: lanUrls(), hostname: os.hostname(), update: updater.state() });
+    if (p === '/api/update' && req.method === 'GET') return sendJson(res, 200, updater.state());
+    if (p === '/api/update/check' && req.method === 'POST') return sendJson(res, 200, await updater.check());
+    if (p === '/api/update/install' && req.method === 'POST') {
+      const err = await updater.install({ port: server.address().port });
+      return err ? sendJson(res, 409, { ok: false, error: err }) : sendJson(res, 200, { ok: true, status: 'installing' });
+    }
     return sendJson(res, 404, { ok: false, error: 'not found' });
   } catch (e) {
     return sendJson(res, 400, { ok: false, error: e.message });

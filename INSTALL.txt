@@ -22,4 +22,7 @@ CONTROL IT FROM A PHONE OR TABLET
   Open the address shown on the control page (Start-up & connection), e.g. http://clock-pc:8765/
   Default password for other devices: archery  — change it on that page.
 
+UPDATES
+  Later versions install from the control page: Start-up & connection > Updates > Install update.
+
 Everything else: README.md

@@ -14,7 +14,7 @@ countdown), without the Arduino / K8055 / serial / network-broadcast parts, plus
 
 ## Download
 
-**[⬇ Download NewArcheryClock-0.1.0.zip](https://github.com/rlight/NewArcheryClock/raw/main/release/NewArcheryClock-0.1.0.zip)**
+**[⬇ Download NewArcheryClock-0.1.1.zip](https://github.com/rlight/NewArcheryClock/raw/main/release/NewArcheryClock-0.1.1.zip)**
 (Windows and Mac). Unzip it and follow `INSTALL.txt`: on Windows run `windows\install.bat`, on a Mac
 right-click `mac/install.command` → Open.
 
@@ -72,6 +72,22 @@ it only runs after someone signs in. For an unattended PC, turn on automatic sig
 **Two monitors** (one at each end of the line): mirror the screens: on Windows *Settings →
 System → Display → Duplicate these displays*; on a Mac *System Settings → Displays → Use as →
 Mirror*. The clock shows on both.
+
+## Updating
+
+The clock checks GitHub for new versions when it starts and once a day. When one is available, the
+control page shows an **Update** badge; *Start-up & connection → Updates* lists what's new with an
+**Install update** button (only between ends). The clock restarts by itself in about 15 seconds.
+
+- `data/` (settings, rounds, password) is never touched; the previous version is kept in `backup/`.
+- If the new version doesn't start within 30 seconds, the old one is put back and started again.
+- Optional: *Install updates automatically at start-up* installs a waiting update when the computer starts.
+- Log: `data/update.log`. Copies that are git checkouts don't self-update (use `git pull`).
+- Clocks running 0.1.0 don't have the updater yet: install 0.1.1 once by hand (unzip over the folder);
+  later versions arrive through the button.
+
+Publishing a new version (maintainer): add a section to `CHANGELOG.md`, then
+`./scripts/make-release.sh --bump patch --publish` and commit/push.
 
 ## Use it
 
@@ -148,7 +164,7 @@ public-performance licence — that's the club's call.
 ```bash
 npm start                     # node server/server.js  (PORT=… and ARCHERYCLOCK_DATA=… override)
 npm test                      # engine tests (node:test)
-./scripts/make-release.sh     # builds release/NewArcheryClock-<version>.zip (app only, no data/docs/tests)
+./scripts/make-release.sh     # builds release/NewArcheryClock-<version>.zip + .sha256 (--bump patch, --publish = GitHub Release)
 ```
 
 No npm packages are needed. `docs/original-spec.md` describes the original program's behaviour;

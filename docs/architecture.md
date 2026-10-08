@@ -43,6 +43,9 @@ Control: `http://<pc>:8765/` (redirects to `/control/`).
 | DELETE | `/api/scenarios/:slot` | removes it |
 | GET | `/api/themes` | `[{id, name, description}]` from `public/themes/*/theme.json` |
 | GET | `/api/anthems` | `[{id, title, performer, file, durationSec, source, licence}]` from `public/anthem/anthems.json` |
+| GET | `/api/update` | `{current, latest, available, notes, checkedAt, status, error, devCopy}` (also in `/api/info`) |
+| POST | `/api/update/check` | check GitHub Releases now |
+| POST | `/api/update/install` | download, verify SHA-256, hand off to `windows/update.ps1` / `mac/update.command`; 409 while an end or the anthem runs |
 | GET | `/api/sounds` | `{ custom: ["file:club-horn.wav", …] }` from `public/sounds/custom/` |
 | GET | `/api/info` | `{ version, urls: ["http://192.168.1.50:8765/", …] }` |
 
@@ -161,7 +164,8 @@ end of end 3, stop 3, emergency 4, finals switch 1, finals end 3, manual per set
              showHints: true, hideIcons: false, bannerText: "", clock: "off", clock24h: false },
   sound: { enabled: true, sound: "file:Default.wav", volume: 1 },
   anthem: { choice: "navy-solo", volume: 1 },
-  venue: "public" | "private",   // private shows the Music panel   // sound ids from shared/sound.js or "file:<name>.wav" in public/sounds/custom
+  venue: "public" | "private",   // private shows the Music panel
+  update: { autoInstallAtStartup: false, repo: "rlight/NewArcheryClock" },   // sound ids from shared/sound.js or "file:<name>.wav" in public/sounds/custom
   start: { scenario: "shiftF5", countdownMinutes: 4, countdownBetweenEnds: false },
   round: {
     system: "fita",

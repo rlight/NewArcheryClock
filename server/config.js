@@ -39,6 +39,7 @@ const DEFAULTS = {
   anthem: { choice: 'navy-solo', volume: 1 },
   // 'private' shows the music controls (operator's choice; see README for the licensing note)
   venue: 'public',
+  update: { autoInstallAtStartup: false, repo: 'rlight/NewArcheryClock' },
   start: { scenario: 'shiftF5', countdownMinutes: 4, countdownBetweenEnds: false },
   round: DEFAULT_ROUND,
 };
@@ -177,6 +178,10 @@ function validate(s, d = DEFAULTS) {
       volume: Math.min(1, Math.max(0, Number.isFinite(Number(snd.volume)) ? Number(snd.volume) : d.sound.volume)),
     },
     venue: oneOf(s.venue, ['public', 'private'], d.venue),
+    update: {
+      autoInstallAtStartup: bool((s.update || {}).autoInstallAtStartup, d.update.autoInstallAtStartup),
+      repo: typeof (s.update || {}).repo === 'string' && /^[\w.-]{1,60}\/[\w.-]{1,100}$/.test(s.update.repo) ? s.update.repo : d.update.repo,
+    },
     anthem: {
       choice: typeof an.choice === 'string' && /^[a-z0-9-]{1,40}$/.test(an.choice) ? an.choice : d.anthem.choice,
       volume: Math.min(1, Math.max(0, Number.isFinite(Number(an.volume)) ? Number(an.volume) : d.anthem.volume)),

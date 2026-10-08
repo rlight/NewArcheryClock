@@ -140,8 +140,13 @@ $('#modal-input').addEventListener('keydown', (e) => {
 
 /* ------------------------------------------------------------------ commands */
 
+let loadedVersion = null;
 function applySnap(snap) {
   if (!snap || typeof snap !== 'object') return;
+  if (snap.version) {   // the clock was updated: reload this page to get the matching control page
+    if (loadedVersion && snap.version !== loadedVersion) { location.reload(); return; }
+    loadedVersion = snap.version;
+  }
   if (S.snap && typeof snap.seq === 'number' && typeof S.snap.seq === 'number' && snap.seq < S.snap.seq) return;
   const prevSystem = S.snap && S.snap.system;
   S.snap = snap;
@@ -697,6 +702,56 @@ function editKeyRound(sc) {
 
 /* ---- password for other devices (Start-up tab) ---- */
 
+/* ---- updates (Start-up tab) ---- */
+
+function updatesCard() {
+  const line = h('p', { class: 'update-line' });
+  const notes = h('div', { class: 'explain update-notes' });
+  const err = h('p', { class: 'field-help update-err' });
+  const checkBtn = h('button', { class: 'btn', type: 'button' }, 'Check now');
+  const installBtn = h('button', { class: 'btn btn-primary', type: 'button' }, 'Install update');
+  const why = h('p', { class: 'field-help' });
+  let st = null;
+  const render = () => {
+    const u = st || (S.info && S.info.update) || {};
+    const busy = isBusy() || !!(S.snap && S.snap.anthem && S.snap.anthem.playing);
+    const when = u.checkedAt ? new Date(u.checkedAt).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' }) : 'not yet';
+    line.innerHTML = u.status === 'downloading' ? `Downloading ${escapeHtml(u.latest || '')}…`
+      : u.status === 'installing' ? `Installing ${escapeHtml(u.latest || '')}. The clock restarts by itself in about 15 seconds.`
+      : u.available ? `<b>Update ${escapeHtml(u.latest)} available</b> (you have ${escapeHtml(u.current || '')}).`
+      : `Version <b>${escapeHtml(u.current || (S.info && S.info.version) || '')}</b>, up to date. Last checked: ${escapeHtml(when)}.`;
+    notes.hidden = !(u.available && u.notes);
+    notes.textContent = u.notes || '';
+    err.hidden = !u.error;
+    err.textContent = u.error || '';
+    installBtn.hidden = !u.available;
+    installBtn.disabled = busy || ['downloading', 'installing'].includes(u.status) || !!u.devCopy;
+    why.hidden = !(u.available && (busy || u.devCopy));
+    why.textContent = u.devCopy ? 'This copy is a git checkout; update it with git pull.' : 'Install between ends (not while an end or the anthem is running).';
+  };
+  const refresh = async () => { try { st = await api.get('/api/update'); } catch {} render(); };
+  checkBtn.addEventListener('click', async () => {
+    checkBtn.disabled = true;
+    try { st = await api.post('/api/update/check', {}); toast(st.available ? `Update ${st.latest} available` : 'Up to date'); }
+    catch (e) { toast(e.message, 'err'); }
+    checkBtn.disabled = false; render();
+  });
+  installBtn.addEventListener('click', async () => {
+    const ok = await ask({ title: `Install ${st ? st.latest : 'the update'}?`, ok: 'Install now',
+      text: 'The clock restarts by itself in about 15 seconds; your settings, rounds and password are kept. If the new version does not start, the old one is put back automatically.' });
+    if (!ok) return;
+    installBtn.disabled = true;
+    try { await api.post('/api/update/install', {}); toast('Installing… the clock will restart'); } catch (e) { toast(e.message, 'err', 5000); }
+    refresh();
+  });
+  onSync(render);
+  refresh();
+  setInterval(() => { if (S.view === 'startup') refresh(); }, 5000);
+  return card('Updates', 'New versions come from GitHub. Your settings, rounds and password are never touched.',
+    line, notes, err, h('div', { class: 'update-actions' }, checkBtn, installBtn), why,
+    toggleField({ label: 'Install updates automatically at start-up', sub: 'When the clock computer starts and an update is waiting, install it before anyone shoots.', path: 'update.autoInstallAtStartup', set: setValue }));
+}
+
 function passwordCard() {
   const status = h('p', { class: 'field-help' });
   const warn = h('div', { class: 'explain warn' });
@@ -968,6 +1023,7 @@ function buildStartup() {
   onSync(renderInfo);
   root.append(card('Connect another device', 'Open one of these on a phone or tablet on the same network to control the clock.', urls, kv));
   root.append(passwordCard());
+  root.append(updatesCard());
   root.append(card('Location', 'Where the clock is used.',
     field('This clock is at', segmented({ path: 'venue', label: 'Location', options: [
       { value: 'public', label: 'Public location' }, { value: 'private', label: 'Private range' }] })),
@@ -1027,6 +1083,9 @@ function headerTime(s) {
 
 function renderHeader() {
   const s = S.snap;
+  const up = s && s.update;
+  $('#hdr-update').hidden = !(up && up.available);
+  if (up && up.available) $('#hdr-update').textContent = `Update ${up.latest}`;
   const chip = $('#hdr-phase');
   const time = $('#hdr-time');
   if (!s) { chip.textContent = '—'; time.textContent = '––'; return; }

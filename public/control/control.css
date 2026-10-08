@@ -543,3 +543,10 @@ input[type="range"] { flex: 1; accent-color: var(--accent); height: 34px; min-wi
 /* music (private range) */
 .music-row { display: grid; grid-template-columns: 1fr 2fr 1fr; gap: 8px; margin-top: 8px; }
 .music-row .btn { font-size: 20px; }
+
+/* updates */
+.update-pill { font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: var(--accent); color: var(--accent-ink); text-decoration: none; white-space: nowrap; }
+.update-line { margin: 0 0 8px; }
+.update-notes { white-space: pre-wrap; max-height: 220px; overflow: auto; margin-bottom: 10px; }
+.update-err { color: var(--red); }
+.update-actions { display: flex; gap: 10px; flex-wrap: wrap; margin: 6px 0 8px; }
