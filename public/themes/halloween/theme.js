@@ -407,7 +407,10 @@ function fit(el, key, maxFs, widthU) {
   if (last.fit[id] && last.fit[id].k === k) return last.fit[id].fs;
   el.style.fontSize = `calc(var(--u) * ${maxFs})`;
   const U = parseFloat(els.stage.style.getPropertyValue('--u')) || 1;
-  const w = el.scrollWidth, target = widthU * U;
+  // measure the content itself (centred flex content overflows both sides, so scrollWidth under-reports)
+  let w = el.scrollWidth;
+  try { const r = document.createRange(); r.selectNodeContents(el); w = Math.max(w, r.getBoundingClientRect().width); } catch (_) { /* ignore */ }
+  const target = widthU * U;
   let fs = maxFs;
   if (w > target && w > 0) { fs = maxFs * target / w; el.style.fontSize = `calc(var(--u) * ${fs.toFixed(2)})`; }
   last.fit[id] = { k, fs };

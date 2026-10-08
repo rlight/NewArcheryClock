@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.1.6
+
+- **Three new display themes:**
+  - **Arctic Blast** — the winter series look: northern lights over icy mountains, falling snow,
+    ice-crystal lamps and navy shield badges.
+  - **Christmas** — snowy night, twinkling tree and presents, ornament lamps, gift-tag letters.
+  - **Thanksgiving** — harvest evening with drifting leaves, hay bales and a turkey; lantern lamps on a
+    wooden board; "Happy Thanksgiving" between ends.
+- Halloween: the time between ends no longer risks running into the pumpkin lamps with wider fonts.
+
 ## 0.1.5
 
 - **Fixes choosing a theme on the Display tab.** With six themes, the live preview cards used up all the
