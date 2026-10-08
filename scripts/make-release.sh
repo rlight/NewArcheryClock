@@ -24,6 +24,11 @@ if [ -n "$BUMP" ]; then
     if (k === "major") { v[0]++; v[1] = 0; v[2] = 0 } else if (k === "minor") { v[1]++; v[2] = 0 } else if (k === "patch") v[2]++; else { console.error("bump: patch|minor|major"); process.exit(1) }
     p.version = v.join("."); fs.writeFileSync("package.json", JSON.stringify(p, null, 2) + "\n"); console.log("version " + p.version);' "$BUMP"
 fi
+# theme-card pictures for the control page, from each theme's "shooting" screenshot (sample 2)
+for d in public/themes/*/; do
+  t=$(basename "$d")
+  [ -f "docs/screenshots/$t-2.png" ] && sips -s format jpeg -s formatOptions 78 -z 360 640 "docs/screenshots/$t-2.png" --out "$d/preview.jpg" >/dev/null
+done
 VER=$(node -p "require('./package.json').version")
 NAME="NewArcheryClock-$VER"
 STAGE=$(mktemp -d)/NewArcheryClock

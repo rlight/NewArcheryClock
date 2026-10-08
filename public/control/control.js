@@ -887,13 +887,16 @@ function buildDisplay() {
   const grid = h('div', { class: 'theme-grid' });
   for (const t of themes) {
     const b = h('button', { type: 'button', class: 'choice theme-card', dataset: { v: JSON.stringify(t.id) } },
-      h('div', { class: 'preview', dataset: { src: `/display/?preview=1&theme=${encodeURIComponent(t.id)}` } }),
+      // a still picture, not a live display: nine live theme displays at once crash phone browsers
+      t.preview
+        ? h('div', { class: 'preview preview-still' }, h('img', { src: t.preview, alt: `${t.name || t.id} theme`, loading: 'lazy', decoding: 'async' }))
+        : h('div', { class: 'preview', dataset: { src: `/display/?preview=1&theme=${encodeURIComponent(t.id)}` } }),
       h('div', { class: 'theme-meta' }, h('span', { class: 'choice-title' }, t.name || t.id), t.description && h('span', { class: 'choice-sub' }, t.description)));
     b.addEventListener('click', () => setValue('display.theme', t.id, 0));
     grid.append(b);
   }
   onSync((s) => { for (const b of grid.children) b.setAttribute('aria-pressed', String(b.dataset.v === JSON.stringify(s.display.theme))); });
-  root.append(card('Theme', 'Previews show the live clock.', grid));
+  root.append(card('Theme', 'Tap a theme to use it; the range display switches straight away.', grid));
 
   const sideSeg = segmented({ path: 'display.trafficSide', label: 'Traffic light side', options: [{ value: 'left', label: 'Left' }, { value: 'right', label: 'Right' }] });
   root.append(card('Layout', null,

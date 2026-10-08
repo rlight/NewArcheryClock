@@ -15,7 +15,7 @@ countdown), without the Arduino / K8055 / serial / network-broadcast parts, plus
 
 ## Download
 
-**[⬇ Download NewArcheryClock-0.1.6.zip](https://github.com/rlight/NewArcheryClock/raw/main/release/NewArcheryClock-0.1.6.zip)**
+**[⬇ Download NewArcheryClock-0.1.7.zip](https://github.com/rlight/NewArcheryClock/raw/main/release/NewArcheryClock-0.1.7.zip)**
 (Windows and Mac). Unzip it and follow `INSTALL.txt`: on Windows run `windows\install.bat`, on a Mac
 right-click `mac/install.command` → Open.
 

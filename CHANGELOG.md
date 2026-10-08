@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.7
+
+- **Fixes the control page crashing on phones** ("A problem repeatedly occurred") when scrolling the
+  Display tab: theme cards now show still pictures instead of nine live copies of the display.
+
 ## 0.1.6
 
 - **Three new display themes:**

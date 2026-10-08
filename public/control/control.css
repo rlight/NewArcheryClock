@@ -550,3 +550,7 @@ input[type="range"] { flex: 1; accent-color: var(--accent); height: 34px; min-wi
 .update-notes { white-space: pre-wrap; max-height: 220px; overflow: auto; margin-bottom: 10px; }
 .update-err { color: var(--red); }
 .update-actions { display: flex; gap: 10px; flex-wrap: wrap; margin: 6px 0 8px; }
+
+/* theme cards use still pictures (public/themes/<id>/preview.jpg) */
+.preview-still { position: relative; overflow: hidden; }
+.preview-still img { display: block; width: 100%; height: 100%; object-fit: cover; }

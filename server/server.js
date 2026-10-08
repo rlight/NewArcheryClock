@@ -190,7 +190,8 @@ function listThemes() {
   return ids.map((id) => {
     try {
       const meta = JSON.parse(fs.readFileSync(path.join(dir, id, 'theme.json'), 'utf8'));
-      return { id, name: meta.name || id, description: meta.description || '', order: meta.order || 99 };
+      const preview = fs.existsSync(path.join(dir, id, 'preview.jpg')) ? `/themes/${id}/preview.jpg` : null;
+      return { id, name: meta.name || id, description: meta.description || '', order: meta.order || 99, preview };
     } catch { return null; }
   }).filter(Boolean).sort((a, b) => a.order - b.order || a.name.localeCompare(b.name));
 }
