@@ -150,6 +150,7 @@ function applySnap(snap) {
   if (S.snap && typeof snap.seq === 'number' && typeof S.snap.seq === 'number' && snap.seq < S.snap.seq) return;
   const prevSystem = S.snap && S.snap.system;
   S.snap = snap;
+  feedPreviews();
   renderHeader();
   renderRun();
   renderAnthem();
@@ -1290,10 +1291,22 @@ function scalePreview(p) {
   f.style.height = `${BASE_H}px`;
   f.style.transform = `scale(${k})`;
 }
+function feedPreviews(target) {
+  if (!S.snap) return;
+  const msg = { type: 'ac-state', snap: S.snap };
+  const frames = target ? [target] : $$('.preview iframe').map((f) => f.contentWindow);
+  for (const w of frames) { try { w && w.postMessage(msg, location.origin); } catch {} }
+}
+window.addEventListener('message', (e) => {
+  if (e.origin === location.origin && e.data && e.data.type === 'ac-ready') feedPreviews(e.source);
+});
+
 function mountPreviews(root) {
   for (const p of $$('.preview[data-src]', root)) {
     if (p.querySelector('iframe')) continue;
-    const f = h('iframe', { src: p.dataset.src, title: 'Display preview', tabindex: '-1', 'aria-hidden': 'true', scrolling: 'no' });
+    // previews are fed from this page (see feedPreviews) rather than each opening its own stream
+    const src = p.dataset.src + (p.dataset.src.includes('?') ? '&' : '?') + 'feed=parent';
+    const f = h('iframe', { src, title: 'Display preview', tabindex: '-1', 'aria-hidden': 'true', scrolling: 'no' });
     p.append(f);
     ro.observe(p);
     scalePreview(p);

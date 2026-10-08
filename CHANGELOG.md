@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.5
+
+- **Fixes choosing a theme on the Display tab.** With six themes, the live preview cards used up all the
+  connections a browser allows to one server, so the change you picked was never sent. The previews now
+  get their updates from the page itself.
+
 ## 0.1.4
 
 - **Fixes the Windows "Install update" button.** The installer is now started independently of the clock,

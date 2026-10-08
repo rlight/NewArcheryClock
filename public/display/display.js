@@ -14,6 +14,9 @@ import { createSoundPlayer } from '../shared/sound.js';
 const params = new URLSearchParams(location.search);
 const PREVIEW = params.get('preview') === '1';
 const MOCK = params.get('mock') === '1';
+// feed=parent: a preview inside the control page gets its snapshots from the page instead of opening
+// its own /events stream (browsers allow only 6 connections per server; six theme previews used them all).
+const FEED_PARENT = params.get('feed') === 'parent' && window.parent !== window;
 const FORCED_THEME = sanitizeId(params.get('theme'));
 const DEFAULT_THEME = 'classic';
 
@@ -416,7 +419,14 @@ function startMock() {
 // ---------------------------------------------------------------- go
 
 if (MOCK) startMock();
-else {
+else if (FEED_PARENT) {
+  ensureTheme(FORCED_THEME || DEFAULT_THEME);
+  window.addEventListener('message', (e) => {
+    if (e.origin !== location.origin || !e.data) return;
+    if (e.data.type === 'ac-state') onSnapshot(e.data.snap);
+  });
+  window.parent.postMessage({ type: 'ac-ready' }, location.origin);
+} else {
   // Render something before the first event arrives (and if the server is down at start).
   ensureTheme(FORCED_THEME || DEFAULT_THEME);
   fetch('/api/settings').then((r) => r.json()).then(applySettings).catch(() => {});
