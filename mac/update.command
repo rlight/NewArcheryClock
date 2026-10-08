@@ -5,6 +5,9 @@
 APP="$1"; ZIP="$2"; SPID="$3"; PORT="$4"; OLDV="$5"; NEWV="$6"; DATA="$7"
 LOG="$DATA/update.log"
 log() { echo "$(date -u +%Y-%m-%dT%H:%M:%SZ) [helper] $*" >> "$LOG"; }
+# tell the server we are running; it only exits once this file exists
+echo $$ > "$DATA/update/helper-started"
+log "helper running"
 NODE=$(command -v node || ls /opt/homebrew/bin/node /usr/local/bin/node 2>/dev/null | head -1)
 
 healthy() {   # the server on PORT answers and reports version $1

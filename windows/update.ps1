@@ -7,6 +7,9 @@ param(
 $ErrorActionPreference = 'Continue'
 $log = Join-Path $DataDir 'update.log'
 function Log($m) { Add-Content -Path $log -Value ("{0:yyyy-MM-ddTHH:mm:ssZ} [helper] {1}" -f (Get-Date).ToUniversalTime(), $m) }
+# tell the server we are running; it only exits once this file exists
+Set-Content -Path (Join-Path $DataDir 'update\helper-started') -Value $PID
+Log "helper running (PowerShell $($PSVersionTable.PSVersion))"
 
 function Test-Version($v) {
   try { (Invoke-RestMethod "http://127.0.0.1:$Port/api/info" -TimeoutSec 3).version -eq $v } catch { $false }

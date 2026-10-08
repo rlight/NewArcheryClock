@@ -116,15 +116,34 @@ function create({ version, dataDir, getSettings, canInstall, onChange = () => {}
       const helper = path.join(updDir, path.basename(helperSrc));
       fs.copyFileSync(helperSrc, helper);
       const args = [APP_DIR, zipPath, String(process.pid), String(port), version, target, dataDir];
-      const child = win
-        ? spawn('powershell.exe', ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-WindowStyle', 'Hidden', '-File', helper,
-            '-AppDir', args[0], '-Zip', args[1], '-ServerPid', args[2], '-Port', args[3], '-OldVersion', args[4], '-NewVersion', args[5], '-DataDir', args[6]],
-            { detached: true, stdio: 'ignore', windowsHide: true })
-        : spawn('/bin/bash', [helper, ...args], { detached: true, stdio: 'ignore' });
-      child.unref();
-      log(`verified ${target} (sha256 ${got.slice(0, 12)}…), helper started; server exiting`);
+      // The helper writes this file as its very first step. We only exit once it exists, so a helper
+      // that fails to start can never leave the range without a clock.
+      const started = path.join(updDir, 'helper-started');
+      if (win) {
+        // "start" gives PowerShell its own console and makes it independent of this process
+        // (a child launched directly from node could die with it, or fail without a console).
+        const q = (s) => `"${String(s).replace(/"/g, '')}"`;
+        const ps = ['powershell.exe', '-NoProfile', '-ExecutionPolicy', 'Bypass', '-WindowStyle', 'Hidden', '-File', q(helper),
+          '-AppDir', q(args[0]), '-Zip', q(args[1]), '-ServerPid', args[2], '-Port', args[3],
+          '-OldVersion', q(args[4]), '-NewVersion', q(args[5]), '-DataDir', q(args[6])].join(' ');
+        spawn('cmd.exe', ['/d', '/s', '/c', `"start "" /min ${ps}"`], { windowsVerbatimArguments: true, windowsHide: true, stdio: 'ignore' }).unref();
+      } else {
+        spawn('/bin/bash', [helper, ...args], { detached: true, stdio: 'ignore' }).unref();
+      }
+      log(`verified ${target} (sha256 ${got.slice(0, 12)}…), waiting for the installer to start`);
       set({ status: 'installing' });
-      setTimeout(() => process.exit(0), 1500);
+      const t0 = Date.now();
+      const wait = setInterval(() => {
+        if (fs.existsSync(started)) {
+          clearInterval(wait);
+          log('installer started; server exiting');
+          setTimeout(() => process.exit(0), 500);
+        } else if (Date.now() - t0 > 15000) {
+          clearInterval(wait);
+          log('installer did not start within 15 s; update cancelled, clock keeps running');
+          set({ status: 'idle', error: 'The installer did not start, so nothing was changed and the clock kept running. See data/update.log.' });
+        }
+      }, 250);
       return null;
     } catch (e) {
       log(`install failed: ${e.message}`);

@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.4
+
+- **Fixes the Windows "Install update" button.** The installer is now started independently of the clock,
+  and the clock only shuts down once the installer reports that it is running; if it doesn't start within
+  15 seconds, the update is cancelled and the clock keeps running.
+- **Clocks on 0.1.1–0.1.3 on Windows must install 0.1.4 by hand once** (stop the clock, unzip
+  NewArcheryClock-0.1.4.zip over the folder, start it). Later updates then work from the button.
+
 ## 0.1.3
 
 - **Halloween theme** (Display tab → Theme): haunted night with a full moon, bats, fog, a graveyard and
