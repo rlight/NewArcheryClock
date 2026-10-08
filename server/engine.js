@@ -594,6 +594,8 @@ class Engine {
       seconds: this.phase === 'wait' ? 0 : this.phase === 'emergency' ? null : shown,
       remainingMs: this.phase === 'wait' || this.phase === 'emergency' ? null : Math.round(rem),
       phaseTotalMs: this.phaseTotalMs,
+      // length of the yellow warning period in this round (0 = none), so themes can say "last 30 s"
+      warningSeconds: sys === 'manual' ? 0 : sys === 'finals' ? this.finalsTimes().orange : this.times().orange,
       digitColor: colorOf[this.phase],
       light: lightOf[this.phase],
       end: { number: this.end, label: sys === '25m1p' ? 'Arrow' : 'End', practice: this.practice, visible: sys === 'fita' || sys === '25m1p' },

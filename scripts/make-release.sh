@@ -2,16 +2,18 @@
 # Builds release/NewArcheryClock-<version>.zip (+ .zip.sha256): the app only (no data/, docs/, tests/, .git).
 #   ./scripts/make-release.sh                 build the current version
 #   ./scripts/make-release.sh --bump patch    0.1.0 -> 0.1.1 first (or: minor, major)
+#   ./scripts/make-release.sh --skip public/themes/x   leave an unfinished folder out of the zip (repeatable)
 #   ./scripts/make-release.sh --publish       also create the GitHub Release v<version> with the zip and
 #                                             checksum attached (notes = that version's CHANGELOG.md section).
 #                                             Installed clocks offer it as an update from then on.
 set -euo pipefail
 cd "$(dirname "$0")/.."
-BUMP=""; PUBLISH=0
+BUMP=""; PUBLISH=0; SKIP=()
 while [ $# -gt 0 ]; do
   case "$1" in
     --bump) BUMP="$2"; shift 2 ;;
     --publish) PUBLISH=1; shift ;;
+    --skip) SKIP+=("$2"); shift 2 ;;
     *) echo "unknown option $1"; exit 1 ;;
   esac
 done
@@ -28,6 +30,7 @@ STAGE=$(mktemp -d)/NewArcheryClock
 mkdir -p "$STAGE" release
 cp -R server public windows mac package.json README.md LICENSE INSTALL.txt CHANGELOG.md "$STAGE"/
 find "$STAGE" -name '.DS_Store' -delete
+for s in "${SKIP[@]+"${SKIP[@]}"}"; do rm -rf "$STAGE/$s"; echo "skipped $s"; done
 chmod +x "$STAGE"/mac/*.command
 rm -f "release/$NAME.zip" "release/$NAME.zip.sha256"
 ( cd "$(dirname "$STAGE")" && zip -qr -X "$OLDPWD/release/$NAME.zip" NewArcheryClock )

@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.1.2
+
+- **Three new display themes** (Display tab → Theme):
+  - **LPYA Sunset** — Lower Providence Youth Archery colours: sunset over the mountains, eagle, pines and
+    the shield logo, with big white numbers on a panel tinted in the phase colour and a shield-shaped light.
+  - **Stadium** — modern sports scoreboard: huge condensed numbers, phase header (WALK UP / SHOOT / LAST 30)
+    and a progress bar that drains as time runs out.
+  - **Daylight** — the whole screen turns red, green or yellow with giant numbers; the most visible outdoors.
+- Themes now know the length of the yellow warning period, so they can say "LAST 30" exactly.
+
 ## 0.1.1
 
 - **Updates from the control page.** The clock checks GitHub for new versions; *Start-up & connection →

@@ -318,7 +318,7 @@ function mockBase(over = {}) {
   const b = {
     seq: 1, serverTime: Date.now(),
     system: 'fita', phase: 'wait', paused: false, hold: false, timeFormat: 'sec',
-    seconds: 0, remainingMs: 0, phaseTotalMs: 0, digitColor: 'idle', light: 'red',
+    seconds: 0, remainingMs: 0, phaseTotalMs: 0, warningSeconds: 30, digitColor: 'idle', light: 'red',
     end: { number: 1, label: 'End', practice: false, visible: true },
     turn: { number: 1, total: 2, visible: true },
     details: {

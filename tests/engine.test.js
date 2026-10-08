@@ -302,3 +302,10 @@ test('F1-F4 default rounds: single / AB-CD at 120 s, NFAA 5-arrow single / AB-CD
   h.advance(250_100);
   assert.equal(h.snap().end.number, 2); // one end per AB + CD
 });
+
+test('snapshot reports the warning length', () => {
+  assert.equal(setup({ fita: { orange: 30 } }).snap().warningSeconds, 30);
+  assert.equal(setup({ system: '25m1p', oneArrow: { orange: 15 } }).snap().warningSeconds, 15);
+  const so = setup({ fita: { practiceEnds: 0 } }); so.cmd('shootoff', 2);
+  assert.equal(so.snap().warningSeconds, 20); // 2 arrows x 10 s
+});

@@ -105,6 +105,7 @@ Pushed on every change and at least every 250 ms while a timer runs.
   seconds: 87,                 // integer to show on the main timer (null = hide digits, e.g. manual)
   remainingMs: 86500,          // precise remaining in this phase (for smooth themes; may be null)
   phaseTotalMs: 120000,        // full length of the current phase (for progress bars)
+  warningSeconds: 30,          // length of the yellow warning period in this round (0 = none)
   digitColor: "idle" | "red" | "green" | "orange" | "blue",
   light: "red" | "orange" | "green" | "off",     // lamp lit on the traffic light
   end: { number: 3, label: "End" | "Arrow", practice: false, visible: true },
