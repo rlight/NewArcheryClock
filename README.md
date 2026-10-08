@@ -7,7 +7,8 @@ countdown), without the Arduino / K8055 / serial / network-broadcast parts, plus
 
 - **Themes** for the full-screen display: **Classic** (looks like ArcheryClock), **Retro LED**
   (looks like the Lancaster / Chronotir physical LED timer), **LPYA Sunset**, **Stadium**,
-  **Daylight** and **Halloween**. Add your own in `public/themes/`.
+  **Daylight**, **Halloween**, **Arctic Blast**, **Christmas** and **Thanksgiving**. Add your own in
+  `public/themes/`.
 - A **web control and settings page** that works on the clock PC, a laptop, a tablet or a
   phone on the same network: big Start / Next / Pause / Stop / Emergency buttons, a live
   preview of the display, and every setting in plain English.
@@ -43,6 +44,12 @@ right-click `mac/install.command` → Open.
 | **Daylight (most visible outdoors)** | **Halloween** |
 | ![Daylight theme, shooting](docs/screenshots/daylight-2.png) | ![Halloween theme, shooting](docs/screenshots/halloween-2.png) |
 | ![Daylight theme, last 30 seconds](docs/screenshots/daylight-3.png) | ![Halloween theme, between ends](docs/screenshots/halloween-14.png) |
+
+| **Arctic Blast (winter series)** | **Christmas** |
+| ![Arctic Blast theme, shooting](docs/screenshots/arctic-blast-2.png) | ![Christmas theme, shooting](docs/screenshots/christmas-2.png) |
+| ![Arctic Blast theme, between ends](docs/screenshots/arctic-blast-14.png) | ![Christmas theme, last 30 seconds](docs/screenshots/christmas-3.png) |
+| **Thanksgiving** | |
+| ![Thanksgiving theme, shooting](docs/screenshots/thanksgiving-2.png) | ![Thanksgiving theme, between ends](docs/screenshots/thanksgiving-14.png) |
 
 Pick one on the control page under *Display → Theme*; the display switches immediately.
 
