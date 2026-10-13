@@ -385,7 +385,18 @@ function render(s) {
   if (countdown) {
     const t = ctx.formatTime(s.seconds, 'min');
     setDigits(els.cdDigits, t);
-    setFs(els.cdDigits.el, Math.min(40, 86 / digitEms(t)));
+    // Width sets the size; then shrink until the whole stack (title, digits, "Minutes") fits the box
+    // height, so no font or screen can push the numbers out of the bottom. Measured once per shape.
+    const cdKey = `${t.length}|${last.layoutKey}`;
+    if (last.cdKey !== cdKey) {
+      last.cdKey = cdKey;
+      let fs = Math.min(40, 86 / digitEms(t));
+      setFs(els.cdDigits.el, fs);
+      for (let i = 0; i < 12 && els.cd.scrollHeight > els.cd.clientHeight + 1; i++) {
+        fs *= 0.92;
+        setFs(els.cdDigits.el, fs);
+      }
+    }
   }
 
   // details row

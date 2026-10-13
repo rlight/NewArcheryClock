@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.8
+
+- **Halloween: a witch on her broomstick** (with her black cat) now flies across the screen while the
+  clock is idle between ends showing the time and date. She keeps to the lower half, so she never covers
+  the time, and she's gone as soon as an end starts.
+- **LPYA Sunset: the match-start countdown can no longer spill out of the bottom of its box.** The
+  numbers now shrink to fit the box's height as well as its width, whatever font or screen the clock uses.
+
 ## 0.1.7
 
 - **Fixes the control page crashing on phones** ("A problem repeatedly occurred") when scrolling the

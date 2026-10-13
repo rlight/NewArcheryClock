@@ -57,6 +57,25 @@ function batSvg() {
     <path d="M45 21 L44 13 L48 18 L52 18 L56 13 L55 21 C57 30 53 36 50 37 C47 36 43 30 45 21 Z"/></svg>`;
 }
 
+const WITCH = `<svg viewBox="-4 -14 204 100" class="hw-witchsvg">
+    <path class="hw-witch-cape" d="M104 33 C90 30 72 35 52 30 C60 38 57 44 44 49 C60 51 74 50 86 60 C94 52 100 44 104 33 Z"/>
+    <path d="M32 62 L192 54" class="hw-witch-stick"/>
+    <path d="M36 57 C22 51 10 50 0 45 C10 55 4 60 -2 66 C10 65 18 69 4 80 C18 76 28 72 38 68 Z"/>
+    <path d="M34 55 L41 54 L43 68 L36 69 Z"/>
+    <path d="M118 58 C117 46 113 36 106 30 C99 28 93 32 91 40 C89 50 87 55 83 60 Z"/>
+    <path d="M104 22 C96 25 90 23 82 28 C91 30 98 29 104 27 Z"/>
+    <circle cx="110" cy="24" r="7"/>
+    <path d="M116 22 L126 26 L116 28 Z"/>
+    <g transform="translate(-1 3.5)"><path d="M95 18 C100 16 112 13 123 11 L122 15 C112 17 101 20 95 21 Z"/>
+    <path d="M100 18 C103 7 101 -2 88 -12 C99 -6 108 2 116 15 Z"/></g>
+    <path d="M110 36 C116 44 120 50 127 57" class="hw-witch-limb"/>
+    <path d="M99 60 C101 67 104 72 107 76 L116 77" class="hw-witch-limb"/>
+    <path d="M106 73 L118 74 L119 79 L105 79 Z"/>
+    <g class="hw-witch-cat"><ellipse cx="58" cy="53" rx="7" ry="6"/><circle cx="64" cy="45" r="4.2"/>
+      <path d="M61 42 L61.5 36 L64.5 41 Z M65 41 L68 36 L68.5 42 Z"/>
+      <path d="M51 55 C45 52 46 44 41 41" class="hw-witch-limb hw-witch-tail"/></g>
+  </svg>`;
+
 function tomb(x, base, w, ht, kind, tilt) {
   const r = w / 2;
   if (kind === 'cross') {
@@ -226,6 +245,9 @@ function mount(r, c) {
   const scene = h('div', 'hw-scene', root);
   scene.innerHTML = sceneHTML();
   const stage = h('div', 'hw-stage', root);
+  // the witch flies in front of the content, below the time row (see .hw-witch in theme.css)
+  const witch = h('div', 'hw-witch', root);
+  witch.innerHTML = `<div class="hw-witch-bob">${WITCH}</div>`;
   const main = h('div', 'hw-main', stage);
   els = {
     scene, stage, main,
@@ -432,6 +454,9 @@ function render(s) {
     && (d.clock === 'time' || d.clock === 'datetime');
   layout(idle ? 'idle' : mode, lightShown, side);
   toggle(root, 'hw-idleclock', idle);
+  // a witch crosses the sky only while the clock sits idle showing the time / date
+  toggle(root, 'hw-witching', !emergency && s.phase === 'wait' && mode === 'std' && !finals
+    && (d.clock === 'time' || d.clock === 'datetime'));
   show(els.badges, idle);
 
   const single = finals && !bothFinals ? s.finals[s.finals.view] : null;
