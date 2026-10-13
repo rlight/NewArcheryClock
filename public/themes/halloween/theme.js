@@ -76,6 +76,17 @@ const WITCH = `<svg viewBox="-4 -14 204 100" class="hw-witchsvg">
       <path d="M51 55 C45 52 46 44 41 41" class="hw-witch-limb hw-witch-tail"/></g>
   </svg>`;
 
+const CAT = `<svg viewBox="0 0 100 92" class="hw-catsvg">
+    <path d="M18 50 L15 6 L45 33 Z M82 50 L85 6 L55 33 Z"/>
+    <path d="M22 18 L24 40 L37 33 Z M78 18 L76 40 L63 33 Z" class="hw-cat-ear"/>
+    <ellipse cx="50" cy="58" rx="36" ry="30"/>
+    <ellipse cx="27" cy="88" rx="11" ry="7"/><ellipse cx="73" cy="88" rx="11" ry="7"/>
+    <g class="hw-cat-eyes"><ellipse cx="36" cy="55" rx="8" ry="9" class="hw-cat-eye"/><ellipse cx="64" cy="55" rx="8" ry="9" class="hw-cat-eye"/>
+      <ellipse cx="36" cy="55" rx="1.8" ry="7" class="hw-cat-pupil"/><ellipse cx="64" cy="55" rx="1.8" ry="7" class="hw-cat-pupil"/></g>
+    <path d="M46 66 L54 66 L50 71 Z" class="hw-cat-nose"/>
+    <path d="M40 69 L8 64 M40 72 L9 76 M60 69 L92 64 M60 72 L91 76" class="hw-cat-whisker"/>
+  </svg>`;
+
 function tomb(x, base, w, ht, kind, tilt) {
   const r = w / 2;
   if (kind === 'cross') {
@@ -239,6 +250,39 @@ function setDigits(d, str, color, suffix = '', secs = '') {
   setData(d.el, 'c', color || 'idle');
 }
 
+// ---------------------------------------------------------------- peeking cat
+let catTimer = null, catOn = false;
+function catSchedule() {
+  clearTimeout(catTimer);
+  catTimer = catOn ? setTimeout(catPeek, 6000 + Math.random() * 16000) : null;
+}
+function catPeek() {
+  if (!els || !catOn) return;
+  const c = els.cat, W = root.clientWidth, H = root.clientHeight;
+  const size = Math.min(W, H) * 0.15;                     // head width, px
+  const ht = size * 0.92;
+  const edge = ['bottom', 'bottom', 'left', 'right'][Math.floor(Math.random() * 4)];
+  let x, y, rot;
+  if (edge === 'bottom') { x = W * (0.06 + Math.random() * 0.8); y = H - ht; rot = 0; }
+  else {
+    // rotated a quarter turn so the head comes in from the side, in the lower half only
+    const cy = H * (0.55 + Math.random() * 0.3);
+    x = (edge === 'left' ? ht / 2 : W - ht / 2) - size / 2; y = cy - ht / 2; rot = edge === 'left' ? 90 : -90;
+  }
+  c.style.width = size + 'px'; c.style.height = ht + 'px';
+  c.style.left = x + 'px'; c.style.top = y + 'px';
+  c.style.transform = `rotate(${rot}deg)`;
+  c.style.setProperty('--tilt', (Math.random() * 24 - 12).toFixed(1) + 'deg');
+  c.classList.remove('peek'); void c.offsetWidth; c.classList.add('peek');
+}
+function catSet(on) {
+  if (on === catOn) return;
+  catOn = on;
+  if (!on && els) els.cat.classList.remove('peek');
+  catSchedule();
+  if (on) { clearTimeout(catTimer); catTimer = setTimeout(catPeek, 2500 + Math.random() * 4000); }
+}
+
 function mount(r, c) {
   root = r; ctx = c; last = {};
   root.classList.add('hw-root', 'hw-font-' + detectFont());
@@ -247,10 +291,14 @@ function mount(r, c) {
   const stage = h('div', 'hw-stage', root);
   // the witch flies in front of the content, below the time row (see .hw-witch in theme.css)
   const witch = h('div', 'hw-witch', root);
-  witch.innerHTML = `<div class="hw-witch-bob">${WITCH}</div>`;
+  witch.innerHTML = `<div class="hw-witch-flip"><div class="hw-witch-bob">${WITCH}</div></div>`;
+  // a black cat that now and then pops its head in from the bottom or a side edge (idle screen only)
+  const cat = h('div', 'hw-cat', root);
+  cat.innerHTML = `<div class="hw-cat-head">${CAT}</div>`;
+  cat.addEventListener('animationend', (e) => { if (e.animationName === 'hw-cat-peek') { cat.classList.remove('peek'); catSchedule(); } });
   const main = h('div', 'hw-main', stage);
   els = {
-    scene, stage, main,
+    scene, stage, main, cat,
     moon: scene.querySelector('.hw-moon'),
     house: scene.querySelector('.hw-house-svg'),
     spider: scene.querySelector('.hw-spider'),
@@ -348,6 +396,7 @@ const HAND = `<g class="hw-bone">
   <path d="M66 92 L76 62 M76 62 L80 44 M80 44 L82 32"/></g>`;
 
 function unmount() {
+  catOn = false; clearTimeout(catTimer); catTimer = null;
   if (ro) ro.disconnect();
   if (root) { root.textContent = ''; root.className = root.className.replace(/\bhw-[\w-]+/g, '').trim(); }
   root = els = ro = null; last = {};
@@ -455,8 +504,10 @@ function render(s) {
   layout(idle ? 'idle' : mode, lightShown, side);
   toggle(root, 'hw-idleclock', idle);
   // a witch crosses the sky only while the clock sits idle showing the time / date
-  toggle(root, 'hw-witching', !emergency && s.phase === 'wait' && mode === 'std' && !finals
-    && (d.clock === 'time' || d.clock === 'datetime'));
+  const witching = !emergency && s.phase === 'wait' && mode === 'std' && !finals
+    && (d.clock === 'time' || d.clock === 'datetime');
+  toggle(root, 'hw-witching', witching);
+  catSet(witching);
   show(els.badges, idle);
 
   const single = finals && !bothFinals ? s.finals[s.finals.view] : null;

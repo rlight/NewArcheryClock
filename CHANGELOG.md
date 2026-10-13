@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.9
+
+- **Halloween: more witch.** She's bigger and now flies back and forth: across the screen, a turn
+  off-screen, and back the other way.
+- **Halloween: a black cat** pops its head in from the bottom or a side edge every so often, looks
+  around and blinks, then ducks away. Like the witch, only on the time-and-date screen between ends.
+
 ## 0.1.8
 
 - **Halloween: a witch on her broomstick** (with her black cat) now flies across the screen while the
