@@ -7,7 +7,7 @@ countdown), without the Arduino / K8055 / serial / network-broadcast parts, plus
 
 - **Themes** for the full-screen display: **Classic** (looks like ArcheryClock), **Retro LED**
   (looks like the Lancaster / Chronotir physical LED timer), **LPYA Sunset**, **Stadium**,
-  **Daylight**, **Halloween**, **Arctic Blast**, **Christmas** and **Thanksgiving**. Add your own in
+  **Daylight**, **Halloween**, **Arctic Blast**, **Christmas**, **Thanksgiving** and **Archery Range**. Add your own in
   `public/themes/`.
 - A **web control and settings page** that works on the clock PC, a laptop, a tablet or a
   phone on the same network: big Start / Next / Pause / Stop / Emergency buttons, a live
@@ -15,7 +15,7 @@ countdown), without the Arduino / K8055 / serial / network-broadcast parts, plus
 
 ## Download
 
-**[⬇ Download NewArcheryClock-0.1.9.zip](https://github.com/rlight/NewArcheryClock/raw/main/release/NewArcheryClock-0.1.9.zip)**
+**[⬇ Download NewArcheryClock-0.1.10.zip](https://github.com/rlight/NewArcheryClock/raw/main/release/NewArcheryClock-0.1.10.zip)**
 (Windows and Mac). Unzip it and follow `INSTALL.txt`: on Windows run `windows\install.bat`, on a Mac
 right-click `mac/install.command` → Open.
 
@@ -48,8 +48,9 @@ right-click `mac/install.command` → Open.
 | **Arctic Blast (winter series)** | **Christmas** |
 | ![Arctic Blast theme, shooting](docs/screenshots/arctic-blast-2.png) | ![Christmas theme, shooting](docs/screenshots/christmas-2.png) |
 | ![Arctic Blast theme, between ends](docs/screenshots/arctic-blast-14.png) | ![Christmas theme, last 30 seconds](docs/screenshots/christmas-3.png) |
-| **Thanksgiving** | |
-| ![Thanksgiving theme, shooting](docs/screenshots/thanksgiving-2.png) | ![Thanksgiving theme, between ends](docs/screenshots/thanksgiving-14.png) |
+| **Thanksgiving** | **Archery Range** |
+| ![Thanksgiving theme, shooting](docs/screenshots/thanksgiving-2.png) | ![Archery Range theme, shooting](docs/screenshots/archery-range-2.png) |
+| ![Thanksgiving theme, between ends](docs/screenshots/thanksgiving-14.png) | ![Archery Range theme, between ends: the archer's arrows stuck in the wall above the target](docs/screenshots/archery-range-14.png) |
 
 Pick one on the control page under *Display → Theme*; the display switches immediately.
 

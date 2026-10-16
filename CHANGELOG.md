@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.1.10
+
+- **New theme: Archery Range.** An indoor range: panelled wall, warm overhead lights, target-face
+  lamps and wooden plaques for the End and detail letters.
+- **Between ends, an archer shoots.** On the time screen between ends, an archer on the left takes an
+  arrow from his quiver, draws and aims at the target on the right. His aim creeps up, and the arrow
+  thunks into the wall above the target. He looks up at it and scratches his head. Up to five arrows
+  pile up in the wall before they're cleared. To make room, this theme leaves the date off that screen.
+
 ## 0.1.9
 
 - **Halloween: more witch.** She's bigger and now flies back and forth: across the screen, a turn
