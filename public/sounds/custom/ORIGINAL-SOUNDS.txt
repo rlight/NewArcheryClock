@@ -4,3 +4,6 @@ the GNU General Public License v3 or later (https://www.gnu.org/licenses/gpl-3.0
 
 If you distribute this clock with these files included, the distribution must comply with the GPL v3.
 Delete them to use only the clock's built-in synthesised sounds.
+
+Default-loud.wav is Default.wav soft-clipped and normalised (about 4 dB louder) for New ArcheryClock;
+as a modified version of ac1.wav it is under the same GPL v3 licence.

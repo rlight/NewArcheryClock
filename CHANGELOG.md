@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.11
+
+- **New sound: Default (loud).** The same tone as Default, about 4 dB louder. The original
+  is already near the maximum level a recording can have, so this version is soft-clipped to stay near
+  full volume for its whole length. It sounds a little harsher, like a buzzer, and carries further on an
+  outdoor range. Pick it under Sound on the control page. The volume slider still works with it.
+
 ## 0.1.10
 
 - **New theme: Archery Range.** An indoor range: panelled wall, warm overhead lights, target-face

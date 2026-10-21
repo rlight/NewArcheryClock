@@ -945,10 +945,13 @@ function buildSound() {
   root.replaceChildren();
   const list = SOUNDS.map((x) => ({ value: x.id, title: x.title, sub: x.sub }));
   const cur = S.settings.sound.sound;
+  const top = [];
   for (const id of new Set([...(S.customSounds || []), ...(cur && cur.startsWith('file:') ? [cur] : [])])) {
-    if (id === 'file:Default.wav') list.unshift({ value: id, title: 'Default', sub: 'Original ArcheryClock sound' });
+    if (id === 'file:Default.wav') top.unshift({ value: id, title: 'Default', sub: 'Original ArcheryClock sound' });
+    else if (id === 'file:Default-loud.wav') top.push({ value: id, title: 'Default (loud)', sub: 'Same sound, about 4 dB louder' });
     else list.push({ value: id, title: id.replace(/^file:/, '').replace(/\.wav$/i, ''), sub: 'Custom file' });
   }
+  list.unshift(...top);
   const pickers = choiceCards({ path: 'sound.sound', options: list, cls: 'sound-grid', set: (p, v) => setValue(p, v, 0) });
 
   const vol = h('input', { type: 'range', min: 0, max: 100, step: 5, 'aria-label': 'Volume' });
