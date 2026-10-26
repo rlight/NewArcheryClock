@@ -1,5 +1,5 @@
 # One-time setup for the New ArcheryClock on a Windows 11 PC. Run install.bat (it asks for admin rights).
-#  - installs Node.js LTS with winget if it is missing
+#  - installs Node.js LTS with winget if it is missing, or updates it to the current LTS if it is already there
 #  - opens the clock's port in Windows Firewall for Private networks (so phones/tablets can reach the control page)
 #  - adds "Archery Clock" shortcuts to the desktop and, optionally, to start-up
 #  - optionally stops the screen from sleeping while plugged in
@@ -13,6 +13,13 @@ if (-not (Get-Command node -ErrorAction SilentlyContinue)) {
   Write-Host 'Installing Node.js LTS...'
   winget install --id OpenJS.NodeJS.LTS -e --accept-source-agreements --accept-package-agreements
   $env:Path = [Environment]::GetEnvironmentVariable('Path', 'Machine') + ';' + [Environment]::GetEnvironmentVariable('Path', 'User')
+} else {
+  # Node.js is already here: pull the current LTS so security fixes in the runtime itself
+  # (not just in the clock) land every time setup is re-run. "No applicable update" is not an error.
+  Write-Host ("Node.js " + (node --version) + " found; checking for an update...")
+  $before = $ErrorActionPreference; $ErrorActionPreference = 'Continue'
+  winget upgrade --id OpenJS.NodeJS.LTS -e --accept-source-agreements --accept-package-agreements 2>&1 | Out-Host
+  $ErrorActionPreference = $before
 }
 Write-Host ("Node.js: " + (node --version))
 

@@ -15,7 +15,7 @@ countdown), without the Arduino / K8055 / serial / network-broadcast parts, plus
 
 ## Download
 
-**[⬇ Download NewArcheryClock-0.1.11.zip](https://github.com/rlight/NewArcheryClock/raw/main/release/NewArcheryClock-0.1.11.zip)**
+**[⬇ Download NewArcheryClock-0.1.12.zip](https://github.com/rlight/NewArcheryClock/raw/main/release/NewArcheryClock-0.1.12.zip)**
 (Windows and Mac). Unzip it and follow `INSTALL.txt`: on Windows run `windows\install.bat`, on a Mac
 right-click `mac/install.command` → Open.
 
@@ -74,7 +74,7 @@ Runs on **Windows 10/11** and **macOS**. Copy this folder to the computer, then:
 
 | | Windows | Mac |
 |---|---|---|
-| Install | Double-click **`windows\install.bat`** (asks for admin rights). Installs Node.js if needed, opens port 8765 in the firewall for Private networks, adds an **Archery Clock** desktop shortcut, and can add it to start-up and stop the screen sleeping. | Double-click **`mac/install.command`**. Installs Node.js with Homebrew if needed (or points you to nodejs.org) and can start the clock at login. The first time a phone connects, allow `node` to accept incoming connections. |
+| Install | Double-click **`windows\install.bat`** (asks for admin rights). Installs Node.js if needed (and updates it if it is already installed), opens port 8765 in the firewall for Private networks, adds an **Archery Clock** desktop shortcut, and can add it to start-up and stop the screen sleeping. | Double-click **`mac/install.command`**. Installs Node.js with Homebrew if needed (updating it when Homebrew already has it, or pointing you to nodejs.org) and can start the clock at login. The first time a phone connects, allow `node` to accept incoming connections. |
 | Start | **Archery Clock** shortcut (or `windows\start-clock.bat`) | `mac/start-clock.command` |
 | Leave full screen | Alt+F4 | Cmd+Q |
 | Stop everything | `windows\stop-clock.bat` | `mac/stop-clock.command` |

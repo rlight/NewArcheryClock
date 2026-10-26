@@ -1,6 +1,6 @@
 #!/bin/bash
 # One-time setup for the Archery Clock on a Mac.
-#  - installs Node.js with Homebrew if it is missing
+#  - installs Node.js with Homebrew if it is missing, or updates it if Homebrew installed it
 #  - optionally starts the clock automatically at login
 cd "$(dirname "$0")/.." || exit 1
 ROOT="$PWD"
@@ -13,6 +13,13 @@ if ! command -v node >/dev/null; then
     echo "Node.js is needed. Install the LTS version from https://nodejs.org (or install Homebrew), then run this again."
     open "https://nodejs.org/en/download"; read -r -p "Press Enter"; exit 1
   fi
+elif command -v brew >/dev/null && brew list --versions node >/dev/null 2>&1; then
+  # Node.js came from Homebrew: pull the current release so security fixes in the runtime itself
+  # (not just in the clock) land every time setup is re-run. "Already up to date" is not an error.
+  echo "Node.js $(node --version) found; checking Homebrew for an update..."
+  brew upgrade node 2>&1 | grep -viE "^Warning: .*already installed" || true
+else
+  echo "Node.js $(node --version) found (not installed by Homebrew). Keep it current from https://nodejs.org."
 fi
 echo "Node.js: $(node --version)"
 chmod +x "$ROOT"/mac/*.command

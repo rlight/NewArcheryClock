@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.12
+
+- **Setup now updates Node.js too.** Re-running `windows\install.bat` or `mac/install.command` on a computer
+  that already has Node.js upgrades it to the current LTS (winget on Windows, Homebrew on a Mac) instead of
+  leaving the version it was first installed with. The clock itself is updated by the in-app updater; the
+  runtime underneath it was not, so security fixes in Node.js (such as CVE-2026-111497, fixed in Node 24.22.1)
+  never reached a range PC. After installing this release, run `install.bat` once on the clock computer.
+
 ## 0.1.11
 
 - **New sound: Default (loud).** The same tone as Default, about 4 dB louder. The original
